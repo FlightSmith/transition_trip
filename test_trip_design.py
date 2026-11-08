@@ -87,6 +87,20 @@ class TripDesignIntegrationTests(unittest.TestCase):
             self.assertAlmostEqual(row["y_span_m"], y, places=12)
             self.assertAlmostEqual(row["x_global_m"], expected_x, places=12)
 
+    def test_signed_global_span_coordinates(self):
+        cfg = copy.deepcopy(self.config)
+        for station in cfg['wing']['stations']:
+            station['y_m'] = -1.333 - station['eta'] * cfg['wing']['semispan_m']
+            station['x_le_m'] = 9.280 + station['eta'] * .4
+        _, summary, _ = run_design(self.config_file(cfg))
+        self.assertEqual(summary['status'], 'feasible')
+        for row in summary['design']:
+            self.assertAlmostEqual(row['y_span_m'], -1.333 - row['eta'] * cfg['wing']['semispan_m'])
+            self.assertAlmostEqual(row['x_global_m'], 9.280 + row['eta'] * .4 + row['x_c'] * row['chord_m'])
+        cfg['wing']['stations'][0]['y_m'] = float('nan')
+        with self.assertRaisesRegex(ValueError, 'y_m must be finite'):
+            validate_config(cfg)
+
     def test_transonic_cp_fallback_rejected_without_heights(self):
         _, summary, rows = run_design(self.directory / "config_transonic_rejected.json")
         self.assertEqual(summary["status"], "not_feasible")

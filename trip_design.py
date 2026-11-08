@@ -69,6 +69,8 @@ def validate_config(cfg):
         raise ValueError('wing.stations must have unique eta values in [0,1]')
     for station in stations:
         positive(station['chord_m'], 'chord_m')
+        if 'y_m' in station and not math.isfinite(float(station['y_m'])):
+            raise ValueError('station y_m must be finite')
     conditions = cfg['conditions']
     ids = [str(c['id']) for c in conditions]
     if not ids or len(set(ids)) != len(ids):
@@ -239,9 +241,28 @@ def select_common_height(profiles, required_m, hardware_mm, cap, target):
     return next((k for k in candidates if feasible(k)), None)
 
 
-def run_design(config_path):
+def run_design(config_path, *, cp_file=None, profiles_file=None, position_xc=None):
     config_path = Path(config_path).resolve()
     cfg = json.loads(config_path.read_text(encoding='utf-8-sig'))
+    if cp_file is not None and profiles_file is not None:
+        raise ValueError('Choose either cp_file or profiles_file, not both')
+    overrides = {}
+    for source, supplied in (('cp', cp_file), ('profiles', profiles_file)):
+        if supplied is not None:
+            data_override = Path(supplied).expanduser().resolve()
+            field = 'cp_file' if source == 'cp' else 'profiles_file'
+            cfg['analysis']['source'] = source
+            cfg['analysis'][field] = str(data_override)
+            overrides.update(source=source, input_filename=data_override.name)
+            cfg['name'] = f"User {source} input with configured wing geometry"
+            cfg['data_origin'] = (f'User-selected {source} input: {data_override.name}. '
+                                  'Geometry and tunnel conditions come from the configuration. '
+                                  'Angle-of-attack labels and their limitations are retained from that configuration. '
+                                  'The template provenance does not establish the origin or validity of this input.')
+    if position_xc is not None:
+        cfg['trip']['position_xc'] = {surface: float(position_xc) for surface in cfg['trip']['position_xc']}
+        overrides['position_xc'] = float(position_xc)
+        cfg['name'] = f"Trip sizing at {100*float(position_xc):g}% chord ({cfg['analysis']['source']} input)"
     calibration = validate_config(cfg)
     wing, trip, analysis = cfg['wing'], cfg['trip'], cfg['analysis']
     source = analysis['source']
@@ -265,8 +286,9 @@ def run_design(config_path):
     condition_rows, design_rows, profiles = [], [], {}
     for station in sorted(wing['stations'], key=lambda s: s['eta']):
         eta, chord = float(station['eta']), float(station['chord_m'])
-        y_span = eta * float(wing['semispan_m'])
-        x_le = float(station.get('x_le_m', y_span * math.tan(math.radians(float(wing['sweep_le_deg'])))))
+        outboard_distance = eta * float(wing['semispan_m'])
+        y_span = float(station.get('y_m', outboard_distance))
+        x_le = float(station.get('x_le_m', outboard_distance * math.tan(math.radians(float(wing['sweep_le_deg'])))))
         if not math.isfinite(x_le):
             raise ValueError('x_le_m must be finite')
         for surface, xc_value in trip['position_xc'].items():
@@ -277,6 +299,8 @@ def run_design(config_path):
                 record = dict(condition_id=cid, alpha_deg=condition['alpha_deg'],
                               mach=condition['mach'], reynolds=condition['reynolds'], eta=eta,
                               surface=surface, x_c=xc, status='invalid', reason='')
+                if condition.get('alpha_label'):
+                    record['alpha_label'] = str(condition['alpha_label'])
                 try:
                     fs = tunnel_state(float(condition['mach']), float(condition['reynolds']),
                                       float(wing['reference_length_m']), float(condition.get('temperature_k', 288.15)))
@@ -358,6 +382,8 @@ def run_design(config_path):
         'Height is exposed protrusion above the model surface, including mounting effects; verify actual installed height.',
         'Height margin and k/delta99 cap are user design policies, not universal transition correlations.',
     ]
+    warnings.extend(f"Condition {condition['id']}: {condition['alpha_label']}"
+                    for condition in cfg['conditions'] if condition.get('alpha_label'))
     if source == 'cp':
         warnings += ['Cp mode assumes the upstream boundary layer remains laminar unless a known limit is supplied.',
                      'Cp mode uses incompressible Thwaites and a reconstructed profile; freestream and upstream local Mach must stay <=0.30.',
@@ -366,7 +392,7 @@ def run_design(config_path):
         warnings += ['Profile mode trusts the supplied laminar confirmation and local kinematic viscosity.',
                      'Scalar profile velocity must follow the direction applicable to the calibrated trip criterion; crossflow is not modeled.']
     summary = dict(name=cfg.get('name', config_path.stem), data_origin=cfg.get('data_origin', 'user supplied'),
-                   source=source, status='feasible' if all_feasible else 'not_feasible',
+                   source=source, status='feasible' if all_feasible else 'not_feasible', overrides=overrides,
                    calibration=calibration, height_margin=margin, max_k_delta99=cap,
                    design=design_rows, uniform_height=uniform, warnings=warnings,
                    inputs=[dict(path=p.relative_to(config_path.parent).as_posix()
@@ -401,8 +427,10 @@ def make_plot(output, cfg, summary, rows):
     colors = {'upper': '#146a8a', 'lower': '#c66527'}
     wing = cfg['wing']
     stations = sorted(wing['stations'], key=lambda s: s['eta'])
-    span = np.array([s['eta'] * wing['semispan_m'] for s in stations])
-    le = np.array([s.get('x_le_m', y * math.tan(math.radians(wing['sweep_le_deg']))) for s, y in zip(stations, span)])
+    outboard = np.array([float(s['eta']) * float(wing['semispan_m']) for s in stations])
+    span = np.array([float(s.get('y_m', distance)) for s, distance in zip(stations, outboard)])
+    le = np.array([float(s.get('x_le_m', distance * math.tan(math.radians(float(wing['sweep_le_deg'])))))
+                   for s, distance in zip(stations, outboard)])
     chord = np.array([s['chord_m'] for s in stations])
     axes[0].fill_between(span, le, le + chord, color='#e6ebef')
     for surface, color in colors.items():
@@ -473,16 +501,26 @@ def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--config', type=Path, required=True)
     parser.add_argument('--output', type=Path, default=Path('results'))
+    inputs = parser.add_mutually_exclusive_group()
+    inputs.add_argument('--cp-file', type=Path, help='Use this Cp CSV (path relative to current directory); configuration is not modified')
+    inputs.add_argument('--profiles-file', type=Path, help='Use this laminar-profile CSV instead of the configured input')
+    parser.add_argument('--position-xc', type=float, help='Override x/c for all configured surfaces, e.g. 0.10')
     parser.add_argument('--no-plot', action='store_true', help='Skip optional matplotlib figures')
     args = parser.parse_args(argv)
     try:
-        cfg, summary, rows = run_design(args.config)
+        cfg, summary, rows = run_design(args.config, cp_file=args.cp_file,
+                                        profiles_file=args.profiles_file, position_xc=args.position_xc)
         write_outputs(args.output, cfg, summary, rows, not args.no_plot)
     except (ValueError, KeyError, OSError, TypeError) as exc:
         print(f'Input error: {exc}', file=sys.stderr)
         return 2
     n = sum(r['status'] == 'feasible' for r in summary['design'])
     print(f"{n}/{len(summary['design'])} station/surface designs feasible across all supplied conditions.")
+    uniform = summary['uniform_height']
+    if uniform['status'] == 'feasible':
+        print(f"Uniform-height option across all stations: {uniform['height_mm']:.6f} mm")
+    else:
+        print(f"Uniform-height option: {uniform['status']}. {uniform.get('reason', '')}")
     print(f"Report: {(args.output / 'report.html').resolve()}")
     if not summary['plot_created'] and not args.no_plot:
         print('Charts not created: install matplotlib; tables and report are complete.')

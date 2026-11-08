@@ -1,0 +1,23 @@
+[
+  {
+    "x_c": 0.07,
+    "blasius_uniform_lower_mm": 0.7837891771699559,
+    "blasius_uniform_upper_mm": 0.7905296554983275,
+    "thwaites_quartic_uniform_lower_mm": 0.7911678476346505,
+    "thwaites_quartic_uniform_upper_mm": 0.7551031298522993
+  },
+  {
+    "x_c": 0.1,
+    "blasius_uniform_lower_mm": 0.8545485496728774,
+    "blasius_uniform_upper_mm": 0.9448636607788633,
+    "thwaites_quartic_uniform_lower_mm": 0.8620284990967071,
+    "thwaites_quartic_uniform_upper_mm": 0.9025208637974118
+  },
+  {
+    "x_c": 0.12,
+    "blasius_uniform_lower_mm": 0.8933878152562297,
+    "blasius_uniform_upper_mm": 1.0350462815509853,
+    "thwaites_quartic_uniform_lower_mm": 0.9009513835755906,
+    "thwaites_quartic_uniform_upper_mm": 0.98866207144178
+  }
+]

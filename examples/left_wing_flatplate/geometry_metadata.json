@@ -1,0 +1,48 @@
+{
+  "root": {
+    "y_m": -1.333,
+    "x_le_m": 9.28,
+    "chord_m": 5.56
+  },
+  "tip": {
+    "y_m": -6.25,
+    "x_le_m": 12.557,
+    "chord_m": 1.0
+  },
+  "analyzed_panel_span_m": 4.917,
+  "leading_edge_sweep_deg": 33.68199959181396,
+  "provided_reference_area_m2": 49.0,
+  "provided_reference_mac_m": 4.629,
+  "linear_panel_area_m2": 16.12776,
+  "linear_panel_trapezoid_mac_m": 3.8082926829268287,
+  "twice_linear_panel_area_m2": 32.25552,
+  "reference_note": "User-provided Sref=49 m^2 and MAC=4.629 m are retained as references; they are not replaced by values derived from this single trapezoidal panel. Their different values may reflect a different reference definition or geometry not included here; no reconciliation is assumed.",
+  "coordinate_note": "Station eta is fractional distance from the supplied root to tip. Station y_m is global spanwise Y (negative on this left panel); profile CSV y_m is instead local wall-normal distance. Global XLE and chord are linearly interpolated between the supplied endpoints.",
+  "blasius_numerics": {
+    "eta_delta99": 4.90998949072159,
+    "theta_coefficient": 0.664116242596764,
+    "displacement_coefficient": 1.7207904077790768,
+    "H": 2.5910982105340565,
+    "integration_step": 0.001,
+    "sample_step": 0.01,
+    "eta_max": 10.0,
+    "raw_edge_velocity_fraction": 0.9999999980153915,
+    "edge_normalization_multiplier": 1.0000000019846085,
+    "wall_second_derivative": 0.3320573362151963,
+    "equation": "f''' + 0.5*f*f''=0; eta=y*sqrt(U/(nu*x)); u/U=f'",
+    "normalization_note": "Velocity fractions are divided by the computed f'(10), only after checking abs(f'(10)-1)<=1e-8. No larger correction is allowed."
+  },
+  "tunnel_state": {
+    "U_inf_m_s": 68.05845737305542,
+    "nu_inf_m2_s": 3.9380324897484187e-05,
+    "rho_inf_kg_m3": 0.454363347862928,
+    "mu_inf_pa_s": 1.7892976260350732e-05,
+    "p_inf_pa": 37581.96346301801,
+    "T_inf_k": 288.15,
+    "mach": 0.2,
+    "reynolds": 8000000.0,
+    "reference_length_m": 4.629
+  },
+  "temperature_note": "Static temperature 288.15 K is an explicit default used to infer dimensional tunnel speed, density and pressure. With constant-property Blasius profiles at specified Re_MAC, nu/U=MAC/Re_MAC fixes the sizing lengths independently of this temperature default.",
+  "profile_laminar_confirmation": "laminar_confirmed=true describes the explicitly assumed undisturbed Blasius model. It is not experimental confirmation that the wing stays laminar."
+}

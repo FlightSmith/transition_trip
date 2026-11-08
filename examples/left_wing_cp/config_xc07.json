@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "name": "Left-wing Cp input example: 7% chord (placeholder Cp=0)",
+  "data_origin": "PLACEHOLDER Cp=0 DEMONSTRATION, NOT ACTUAL WING Cp. The supplied left-wing geometry, MAC=4.629 m, Sref=49 m^2, Mach=0.2 and Re_MAC=8e6 are retained. All Cp values are zero solely to exercise the input workflow with a zero-pressure-gradient flat-plate baseline. Both surfaces are identical by this assumption. The Cp route uses Thwaites integral thickness and a quartic profile surrogate, not the numerical Blasius profiles of the separate flat-plate example. alpha_deg=0 is a placeholder label; physical test angle of attack is unspecified and must be set when adding real cases. Sweep sets coordinates only; three-dimensional flow and crossflow are not solved. Replace cp.csv and this provenance with the actual measurement or CFD source before using the results as a wing estimate.",
+  "wing": {
+    "semispan_m": 4.917,
+    "sweep_le_deg": 33.68199959181396,
+    "reference_length_m": 4.629,
+    "reference_area_m2": 49.0,
+    "stations": [
+      {
+        "eta": 0.0,
+        "y_m": -1.333,
+        "x_le_m": 9.28,
+        "chord_m": 5.56
+      },
+      {
+        "eta": 0.05,
+        "y_m": -1.57885,
+        "x_le_m": 9.44385,
+        "chord_m": 5.332
+      },
+      {
+        "eta": 0.1,
+        "y_m": -1.8247,
+        "x_le_m": 9.6077,
+        "chord_m": 5.103999999999999
+      },
+      {
+        "eta": 0.15000000000000002,
+        "y_m": -2.07055,
+        "x_le_m": 9.77155,
+        "chord_m": 4.8759999999999994
+      },
+      {
+        "eta": 0.2,
+        "y_m": -2.3164,
+        "x_le_m": 9.9354,
+        "chord_m": 4.648
+      },
+      {
+        "eta": 0.25,
+        "y_m": -2.5622499999999997,
+        "x_le_m": 10.09925,
+        "chord_m": 4.42
+      },
+      {
+        "eta": 0.30000000000000004,
+        "y_m": -2.8081,
+        "x_le_m": 10.2631,
+        "chord_m": 4.191999999999999
+      },
+      {
+        "eta": 0.35000000000000003,
+        "y_m": -3.0539500000000004,
+        "x_le_m": 10.42695,
+        "chord_m": 3.9639999999999995
+      },
+      {
+        "eta": 0.4,
+        "y_m": -3.2998000000000003,
+        "x_le_m": 10.5908,
+        "chord_m": 3.7359999999999998
+      },
+      {
+        "eta": 0.45,
+        "y_m": -3.54565,
+        "x_le_m": 10.75465,
+        "chord_m": 3.5079999999999996
+      },
+      {
+        "eta": 0.5,
+        "y_m": -3.7915,
+        "x_le_m": 10.9185,
+        "chord_m": 3.28
+      },
+      {
+        "eta": 0.55,
+        "y_m": -4.03735,
+        "x_le_m": 11.08235,
+        "chord_m": 3.0519999999999996
+      },
+      {
+        "eta": 0.6000000000000001,
+        "y_m": -4.2832,
+        "x_le_m": 11.2462,
+        "chord_m": 2.8239999999999994
+      },
+      {
+        "eta": 0.65,
+        "y_m": -4.52905,
+        "x_le_m": 11.41005,
+        "chord_m": 2.5959999999999996
+      },
+      {
+        "eta": 0.7000000000000001,
+        "y_m": -4.774900000000001,
+        "x_le_m": 11.5739,
+        "chord_m": 2.3679999999999994
+      },
+      {
+        "eta": 0.75,
+        "y_m": -5.02075,
+        "x_le_m": 11.73775,
+        "chord_m": 2.1399999999999997
+      },
+      {
+        "eta": 0.8,
+        "y_m": -5.2666,
+        "x_le_m": 11.9016,
+        "chord_m": 1.912
+      },
+      {
+        "eta": 0.8500000000000001,
+        "y_m": -5.51245,
+        "x_le_m": 12.06545,
+        "chord_m": 1.6839999999999997
+      },
+      {
+        "eta": 0.9,
+        "y_m": -5.7583,
+        "x_le_m": 12.2293,
+        "chord_m": 1.4559999999999995
+      },
+      {
+        "eta": 0.9500000000000001,
+        "y_m": -6.00415,
+        "x_le_m": 12.39315,
+        "chord_m": 1.2279999999999998
+      },
+      {
+        "eta": 1.0,
+        "y_m": -6.25,
+        "x_le_m": 12.557,
+        "chord_m": 1.0
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "id": "case_01",
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "alpha_deg": 0.0,
+      "temperature_k": 288.15,
+      "alpha_label": "placeholder zero-pressure-gradient case; physical AoA unspecified"
+    }
+  ],
+  "trip": {
+    "type": "grit",
+    "position_xc": {
+      "upper": 0.07,
+      "lower": 0.07
+    },
+    "height_margin": 1.1,
+    "max_k_delta99": 0.8,
+    "available_heights_mm": []
+  },
+  "analysis": {
+    "source": "cp",
+    "cp_file": "cp.csv"
+  }
+}

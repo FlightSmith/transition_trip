@@ -10,7 +10,98 @@ Reynolds-number criterion; it does not predict natural transition, the distance
 from the trip to complete transition, or the drag penalty of a particular trip.
 Verify the selected trip in the tunnel using an appropriate transition diagnostic.
 
-## Run the example
+## Run after downloading from GitHub
+
+Download and extract the repository, or clone it. Install Python **3.10 or
+newer** on the new computer. No Codex installation is required.
+
+**Windows:** double-click `setup_windows.cmd` once. It creates a local `.venv`
+and installs the dependencies. Then double-click `run_windows.cmd` to choose:
+
+1. M6 synthetic Cp example.
+2. Left-wing Blasius example at 7%, 10%, and 12% chord.
+3. Left-wing Cp-input demonstration at those three positions.
+4. Your own Cp CSV with the supplied left-wing geometry and tunnel condition.
+5. Your own JSON configuration, using either Cp or laminar-profile input.
+
+**macOS/Linux:** run these commands from the extracted project directory:
+
+```sh
+python3 setup_environment.py
+.venv/bin/python run_trip.py
+```
+
+Setup requires an internet connection to install dependencies. Calculations
+then run locally. Do not copy `.venv` between computers; run setup on each one.
+The setup and menu use project-relative locations and do not require the
+original computer's paths. Existing example inputs are included in GitHub;
+regenerating them is optional and replaces the selected example files.
+
+## Use your own Cp distribution
+
+The ready-to-copy left-wing templates are in `examples/left_wing_cp/`.
+They retain MAC=4.629 m, Mach=0.2, Re_MAC=8 million, signed left-wing coordinates,
+and the three requested trip locations. **Their Cp values are all zero and are
+only a format demonstration, not actual wing pressures.**
+
+Copy that folder to a separate case folder. Update its `cp.csv`, the condition
+metadata, and `data_origin` in the JSON files. Then run a configuration directly:
+
+```powershell
+.\run_windows.cmd --config .\my_case\config_xc10.json --output .\results\my_case
+```
+
+You can instead supply a CSV on the command line while keeping a configuration
+as the geometry/tunnel template:
+
+```powershell
+.\run_windows.cmd --config .\examples\left_wing_cp\config_xc10.json --cp-file "C:\test-data\my_cp.csv" --position-xc 0.10 --output .\results\my_cp_run
+```
+
+On macOS/Linux, replace `.\run_windows.cmd` with `.venv/bin/python run_trip.py`
+and use the appropriate paths. The same options work with `trip_design.py`.
+`--cp-file` explicitly selects Cp mode; `--profiles-file` selects the profile
+mode. They are mutually exclusive. `--position-xc` changes the position for
+every surface listed in the configuration. Omit it to retain separate upper
+and lower positions. `--no-plot` skips charts. Input files are never edited by
+these overrides, and `summary.json` records the overrides and actual data hashes.
+
+Command-line paths are relative to the current working directory; file paths
+inside JSON are relative to that JSON file's directory. Quote paths with spaces.
+
+For real Cp data:
+
+- Match every `condition_id`, `eta`, and `surface` to the JSON configuration.
+  Set the actual angle of attack, Mach, reference Reynolds number and static
+  temperature; changing labels does not calculate a new pressure distribution.
+- The default left-wing template contains 21 stations and one `case_01`.
+  Supply all requested stations or edit `wing.stations` to match the stations
+  you actually have. There is no spanwise or angle-of-attack interpolation.
+- Use `Cp=(p-p_inf)/(0.5*rho_inf*U_inf^2)` for the matching tunnel condition,
+  with upstream chordwise coverage through the trip, not just Cp at the trip.
+- Provide physical surface distance `s_m` when available. If the profile starts
+  downstream, supply a positive, physically justified `theta0_m` in the first
+  row of each series. **Do not retain the demo's zero initial thickness for a
+  real downstream start, or reset the distance origin to bypass initialization.**
+  The exact stagnation point with zero edge velocity is not handled; start at
+  a nonstagnant point with a justified initial boundary-layer thickness.
+- Both freestream and upstream local Mach must be at most 0.30 in Cp mode.
+  Known transition/separation upstream invalidates the laminar trip estimate.
+
+For the supplied left panel, convert global coordinates using:
+
+```text
+eta = (Y + 1.333) / (-4.917)
+local_chord = 5.56 - 4.56 * eta
+X_LE = 9.280 + 3.277 * eta
+x_c = (X - X_LE) / local_chord
+```
+
+Thus `eta=0` is the specified root and `eta=1` the tip; it is not `abs(Y)/6.25`.
+The full CSV schema is documented below. All outputs are estimates subject to
+the validity limits of the chosen boundary-layer and trip models.
+
+## Run the original example directly
 
 Use Python 3.10 or later and install the dependencies listed in `requirements.txt`:
 
@@ -32,7 +123,7 @@ Input provenance in `summary.json` records SHA-256 hashes and paths relative to
 the configuration directory. Inputs outside that directory are identified by
 filename and hash, without recording machine-specific absolute paths.
 
-On the prepared Windows workspace, `run_example.ps1` runs both examples using
+On the original prepared Windows workspace, `run_example.ps1` runs both M6 examples using
 an available Python installation or the Codex bundled Python runtime. Plotting
 dependencies are installed locally in `.runtime`; that directory is excluded
 from the portable archive. On another machine, install `requirements.txt` first.
@@ -61,6 +152,32 @@ python trip_design.py --config examples/m6_synthetic/config_transonic_rejected.j
 ```
 
 ## What the example represents
+
+The separate `generate_left_wing.py` example uses the user-supplied left panel
+from `(X_LE,Y,c)=(9.280,-1.333,5.56)` m to `(12.557,-6.250,1.0)` m,
+Mach 0.2 and Reynolds number 8 million on the supplied 4.629 m reference MAC.
+It generates idealized zero-pressure-gradient Blasius laminar profiles for
+7%, 10% and 12% local-chord positions, and runs through the supplied-profile
+input path. The upper and lower estimates coincide solely because the same
+flat-plate assumption is applied to both. These are not wing pressure data.
+
+```text
+python generate_left_wing.py
+python trip_design.py --config examples/left_wing_flatplate/config_xc07.json --output results/left_wing_flatplate/xc07
+python trip_design.py --config examples/left_wing_flatplate/config_xc10.json --output results/left_wing_flatplate/xc10
+python trip_design.py --config examples/left_wing_flatplate/config_xc12.json --output results/left_wing_flatplate/xc12
+```
+
+This case uses continuous heights, with a 10% height margin and the 0.8
+`k/delta99` cap; no hardware-size inventory is assumed. The supplied dimensions
+are treated as physical model dimensions. The exposed trapezoidal panel does
+not define the supplied full-wing reference area or MAC; those reference
+quantities are retained as supplied. Flat-plate results omit root junction,
+wingtip and sweep/crossflow effects. The 7% uniform-height interval is very
+narrow and sensitive to profile assumptions; use the spanwise results as a
+preliminary estimate, not a validated installation specification.
+
+The original M6 example is described below.
 
 The planform is inspired by the published ONERA M6 wing: nominal root chord
 0.8059 m, taper ratio 0.562, semispan 1.1963 m, leading-edge sweep 30 degrees,
@@ -127,6 +244,12 @@ x_global = y * tan(sweep_le) + (x/c) * local_chord
 
 For a nonstraight leading edge, each station can instead provide `x_le_m`;
 its placement becomes `x_global = x_le_m + (x/c) * local_chord`.
+An optional station `y_m` sets its signed global spanwise coordinate, allowing
+left-side panels and roots offset from the centerline. Without this override,
+the spanwise coordinate remains `eta * semispan_m`. In a panel-only analysis,
+`semispan_m` is the analyzed root-to-tip span and `eta` runs from that panel's
+root to its tip; supply both `y_m` and `x_le_m` to preserve aircraft coordinates.
+This station coordinate is distinct from the wall-normal `y_m` in profile CSVs.
 
 It does not provide a crossflow or attachment-line transition model. The tool
 does not apply an unexplained cosine correction to turn strip results into a
@@ -206,7 +329,7 @@ Configuration sections:
 | `schema_version` | `1` |
 | `name`, `data_origin` | Optional case label and provenance description; strongly recommended |
 | `wing` | `semispan_m`, `sweep_le_deg`, `reference_length_m`, and `stations` |
-| `wing.stations` | Objects containing `eta` and streamwise `chord_m`; optional `x_le_m` overrides sweep-based placement |
+| `wing.stations` | Objects containing `eta` and streamwise `chord_m`; optional `x_le_m` and signed global `y_m` override placement |
 | `conditions` | Objects containing unique `id`, `mach`, `reynolds`, `alpha_deg`, and optional `temperature_k` |
 | `trip` | `type`, `position_xc`; optional `height_margin` (default 1.10), `max_k_delta99` (default 0.80), and `available_heights_mm` |
 | `analysis` | `source: "cp"` with `cp_file`, or `source: "profiles"` with `profiles_file` |
