@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "name": "Synthetic M6-inspired wing: supplied-profile input",
+  "data_origin": "SYNTHETIC example. Published M6-inspired planform only; Cp is an analytic mild-recovery curve and is not ONERA test data or CFD. Profiles are generated from the same Thwaites/quartic surrogate as the Cp route and are not independent validation. Surface distance is approximated by x_c times local chord. Initial theta uses an assumed linear stagnation-to-first-point velocity ramp.",
+  "wing": {
+    "semispan_m": 1.1963,
+    "sweep_le_deg": 30.0,
+    "reference_length_m": 0.64607,
+    "stations": [
+      {
+        "eta": 0.2,
+        "chord_m": 0.73530316
+      },
+      {
+        "eta": 0.44,
+        "chord_m": 0.6505869519999999
+      },
+      {
+        "eta": 0.65,
+        "chord_m": 0.57646027
+      },
+      {
+        "eta": 0.8,
+        "chord_m": 0.52351264
+      },
+      {
+        "eta": 0.9,
+        "chord_m": 0.4882142200000001
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "id": "a0_r3",
+      "mach": 0.18,
+      "reynolds": 3000000.0,
+      "alpha_deg": 0.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "a3_r3",
+      "mach": 0.18,
+      "reynolds": 3000000.0,
+      "alpha_deg": 3.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "a6_r3",
+      "mach": 0.18,
+      "reynolds": 3000000.0,
+      "alpha_deg": 6.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "a0_r6",
+      "mach": 0.18,
+      "reynolds": 6000000.0,
+      "alpha_deg": 0.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "a3_r6",
+      "mach": 0.18,
+      "reynolds": 6000000.0,
+      "alpha_deg": 3.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "a6_r6",
+      "mach": 0.18,
+      "reynolds": 6000000.0,
+      "alpha_deg": 6.0,
+      "temperature_k": 288.15
+    }
+  ],
+  "trip": {
+    "type": "grit",
+    "position_xc": {
+      "upper": 0.1,
+      "lower": 0.1
+    },
+    "height_margin": 1.1,
+    "max_k_delta99": 0.8,
+    "available_heights_mm": [
+      0.05,
+      0.06,
+      0.08,
+      0.1,
+      0.12,
+      0.15,
+      0.18,
+      0.2,
+      0.25,
+      0.3,
+      0.4,
+      0.5
+    ]
+  },
+  "analysis": {
+    "source": "profiles",
+    "profiles_file": "profiles.csv"
+  }
+}

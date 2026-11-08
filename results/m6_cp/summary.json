@@ -1,0 +1,184 @@
+{
+  "name": "Synthetic M6-inspired wing: 10% chord grit trip",
+  "data_origin": "SYNTHETIC example. Published M6-inspired planform only; Cp is an analytic mild-recovery curve and is not ONERA test data or CFD. Profiles are generated from the same Thwaites/quartic surrogate as the Cp route and are not independent validation. Surface distance is approximated by x_c times local chord. Initial theta uses an assumed linear stagnation-to-first-point velocity ramp.",
+  "source": "cp",
+  "status": "feasible",
+  "calibration": {
+    "critical_re_k": 600.0,
+    "min_re_x": 100000.0,
+    "max_edge_mach": 0.95,
+    "notes": "Subsonic equiaxed distributed grit; NASA TN D-3579. Mach cap 0.95 is a tool guard."
+  },
+  "height_margin": 1.1,
+  "max_k_delta99": 0.8,
+  "design": [
+    {
+      "eta": 0.2,
+      "surface": "upper",
+      "x_c": 0.1,
+      "chord_m": 0.73530316,
+      "y_span_m": 0.23926,
+      "x_global_m": 0.21166714140630988,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a0_r3",
+      "max_k_delta99": 0.6296864520408396,
+      "min_re_k": 872.1532882434877
+    },
+    {
+      "eta": 0.2,
+      "surface": "lower",
+      "x_c": 0.1,
+      "chord_m": 0.73530316,
+      "y_span_m": 0.23926,
+      "x_global_m": 0.21166714140630988,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a6_r3",
+      "max_k_delta99": 0.6278287183546628,
+      "min_re_k": 843.4655270602155
+    },
+    {
+      "eta": 0.44,
+      "surface": "upper",
+      "x_c": 0.1,
+      "chord_m": 0.6505869519999999,
+      "y_span_m": 0.526372,
+      "x_global_m": 0.36895971109388165,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a0_r3",
+      "max_k_delta99": 0.6689018751517631,
+      "min_re_k": 914.9644056522983
+    },
+    {
+      "eta": 0.44,
+      "surface": "lower",
+      "x_c": 0.1,
+      "chord_m": 0.6505869519999999,
+      "y_span_m": 0.526372,
+      "x_global_m": 0.36895971109388165,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a6_r3",
+      "max_k_delta99": 0.6671519284282785,
+      "min_re_k": 885.4714898362074
+    },
+    {
+      "eta": 0.65,
+      "surface": "upper",
+      "x_c": 0.1,
+      "chord_m": 0.57646027,
+      "y_span_m": 0.7775949999999999,
+      "x_global_m": 0.506590709570507,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a0_r3",
+      "max_k_delta99": 0.7101329766726495,
+      "min_re_k": 957.7251824071582
+    },
+    {
+      "eta": 0.65,
+      "surface": "lower",
+      "x_c": 0.1,
+      "chord_m": 0.57646027,
+      "y_span_m": 0.7775949999999999,
+      "x_global_m": 0.506590709570507,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a6_r3",
+      "max_k_delta99": 0.7084838823417051,
+      "min_re_k": 927.5297051393048
+    },
+    {
+      "eta": 0.8,
+      "surface": "upper",
+      "x_c": 0.1,
+      "chord_m": 0.52351264,
+      "y_span_m": 0.95704,
+      "x_global_m": 0.6048985656252395,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a0_r3",
+      "max_k_delta99": 0.7448338086731628,
+      "min_re_k": 991.9109988056949
+    },
+    {
+      "eta": 0.8,
+      "surface": "lower",
+      "x_c": 0.1,
+      "chord_m": 0.52351264,
+      "y_span_m": 0.95704,
+      "x_global_m": 0.6048985656252395,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a6_r3",
+      "max_k_delta99": 0.7432595826991261,
+      "min_re_k": 961.2165988766129
+    },
+    {
+      "eta": 0.9,
+      "surface": "upper",
+      "x_c": 0.1,
+      "chord_m": 0.4882142200000001,
+      "y_span_m": 1.07667,
+      "x_global_m": 0.6704371363283944,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a0_r3",
+      "max_k_delta99": 0.7710580454909792,
+      "min_re_k": 1016.6430450029485
+    },
+    {
+      "eta": 0.9,
+      "surface": "lower",
+      "x_c": 0.1,
+      "chord_m": 0.4882142200000001,
+      "y_span_m": 1.07667,
+      "x_global_m": 0.6704371363283944,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.25,
+      "governing_condition": "a6_r3",
+      "max_k_delta99": 0.7695349812938357,
+      "min_re_k": 985.6191191569951
+    }
+  ],
+  "uniform_height": {
+    "status": "feasible",
+    "height_mm": 0.25,
+    "reason": ""
+  },
+  "warnings": [
+    "Preliminary trip sizing, not a prediction or guarantee of transition or downstream turbulent development.",
+    "Only the supplied discrete conditions are covered; no guarantee between sampled angles of attack or Reynolds numbers.",
+    "Sweep sets placement geometry only. Crossflow, attachment-line transition, and 3D streamline histories are not solved.",
+    "Height is exposed protrusion above the model surface, including mounting effects; verify actual installed height.",
+    "Height margin and k/delta99 cap are user design policies, not universal transition correlations.",
+    "Cp mode assumes the upstream boundary layer remains laminar unless a known limit is supplied.",
+    "Cp mode uses incompressible Thwaites and a reconstructed profile; freestream and upstream local Mach must stay <=0.30.",
+    "Angle of attack labels select supplied Cp cases; they do not generate aerodynamic loading."
+  ],
+  "inputs": [
+    {
+      "path": "config.json",
+      "path_base": "configuration directory",
+      "sha256": "79df9f8a65e86ea18639a30bd068600135faefaa20d33620aba645916ae1d7db"
+    },
+    {
+      "path": "cp.csv",
+      "path_base": "configuration directory",
+      "sha256": "5e7e8970ba2e55351db2aa9257e2e6b522f2b2b72b5b80e4f000d7935543ad46"
+    }
+  ],
+  "plot_created": true
+}

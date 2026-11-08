@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+.runtime/
+.venv/
+.plot_cache/
+/transition_trip_tool.zip
