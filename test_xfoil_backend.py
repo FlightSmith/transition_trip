@@ -126,6 +126,36 @@ class XfoilBackendTests(unittest.TestCase):
             return subprocess.CompletedProcess(args, 0, "")
         self.assertFalse(self.run_mock(no_polar)["converged"])
 
+    def test_recovered_march_warning_requires_final_converged_polar(self):
+        warning = 'MRCHDU: Convergence failed at 6 side 1\n'
+        def recovered(args, **kwargs):
+            self.write_outputs(Path(kwargs['cwd']))
+            return subprocess.CompletedProcess(args, 0, warning + 'Point added to stored polar')
+        result = self.run_mock(recovered)
+        self.assertTrue(result['converged'], result['reason'])
+        self.assertEqual(result['solver_warnings'], [warning.strip()])
+        def no_final_point(args, **kwargs):
+            self.write_outputs(Path(kwargs['cwd']), polar=POLAR.rsplit('\n', 2)[0]+'\n')
+            return subprocess.CompletedProcess(args, 0, warning)
+        self.assertFalse(self.run_mock(no_final_point)['converged'])
+
+    def test_numerical_retries_stop_at_first_converged_solution(self):
+        from unittest.mock import patch
+        from xfoil_backend import run_xfoil_with_retries
+        failures = [dict(converged=False, reason='not converged', panels=280, iterations=200),
+                    dict(converged=True, reason='', panels=280, iterations=600)]
+        with patch('xfoil_backend.run_xfoil', side_effect=failures) as solve:
+            result = run_xfoil_with_retries('exe', 'foil', 'output', 5e6, .2, 2.,
+                                           panels=280, retry_panels=[280, 240, 200])
+        self.assertTrue(result['converged'])
+        self.assertEqual(len(result['attempts']), 2)
+        self.assertEqual(solve.call_count, 2)
+        self.assertEqual(solve.call_args_list[0].args, solve.call_args_list[1].args)
+        self.assertEqual(solve.call_args_list[1].kwargs['iterations'], 600)
+        with patch('xfoil_backend.run_xfoil', return_value=failures[1]) as solve:
+            run_xfoil_with_retries('exe', 'foil', 'output', 5e6, .2, 2., retry_panels=[240])
+        self.assertEqual(solve.call_count, 1)
+
     def test_wrong_polar_conditions_rejected(self):
         def wrong_re(args, **kwargs):
             self.write_outputs(Path(kwargs["cwd"]), polar=POLAR.replace("1.000 e 6", "2.000 e 6"))

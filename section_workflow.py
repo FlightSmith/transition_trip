@@ -142,6 +142,8 @@ def prepare_geometry(settings, records, output):
                                incidence_deg=section['incidence_deg'], normalized_file=airfoil.relative_to(output).as_posix()))
     sweep = math.degrees(math.atan2(stations[-1]['x_le_m'] - stations[0]['x_le_m'], span))
     wing = dict(semispan_m=span, sweep_le_deg=sweep, reference_length_m=float(settings['reference_mac_m']), stations=stations)
+    if 'reference_area_m2' in settings:
+        wing['reference_area_m2'] = positive(settings['reference_area_m2'], 'reference_area_m2')
     return sections, wing, provenance
 
 
@@ -230,7 +232,7 @@ def execute(settings_path, output, *, mode=None, value_kind=None, dynamic_pressu
                     diagnostics.append(dict(state=state_id, y_m=y, surface=surface_name, initialization=method,
                                             initial_xc=float(x[0]), initial_s_m=float(s[0]), theta0_m=theta0))
             else:
-                from xfoil_backend import run_xfoil, sample_laminar_station
+                from xfoil_backend import run_xfoil_with_retries, sample_laminar_station
                 options = settings.get('xfoil', {})
                 executable = xfoil_executable or os.environ.get('XFOIL_EXE') or options.get('executable', 'xfoil')
                 local_re = condition['reynolds'] * section['chord_m'] / wing['reference_length_m']
@@ -244,16 +246,23 @@ def execute(settings_path, output, *, mode=None, value_kind=None, dynamic_pressu
                 if prepare_only:
                     continue
                 try:
-                    solved = run_xfoil(executable, section['airfoil_path'], output / 'xfoil_runs', local_re,
+                    solved = run_xfoil_with_retries(executable, section['airfoil_path'], output / 'xfoil_runs', local_re,
                                        condition['mach'], local_alpha, ncrit=float(options.get('ncrit', 9.)),
                                        iterations=int(options.get('iterations', 200)),
-                                       timeout_s=float(options.get('timeout_s', 60.)), panels=int(options.get('panels', 200)))
+                                       timeout_s=float(options.get('timeout_s', 60.)), panels=int(options.get('panels', 200)),
+                                       retry_panels=options.get('retry_panels', ()),
+                                       retry_iterations=options.get('retry_iterations', 600))
                     audit = {k: solved[k] for k in ('converged', 'reason', 'polar', 'ncrit', 'panels',
                              'iterations', 'executable_sha256', 'airfoil_sha256', 'transition_model',
-                             'dump_note', 'returncode') if k in solved}
+                             'dump_note', 'returncode', 'solver_warnings') if k in solved}
                     for k in ('workdir', 'stdout_path', 'commands_path'):
                         if solved.get(k):
                             audit[k] = Path(solved[k]).relative_to(output).as_posix()
+                    audit['attempts'] = copy.deepcopy(solved.get('attempts', []))
+                    for attempt in audit['attempts']:
+                        for k in ('workdir', 'stdout_path', 'commands_path'):
+                            if attempt.get(k):
+                                attempt[k] = Path(attempt[k]).relative_to(output).as_posix()
                     if not solved.get('converged'):
                         failure = solved.get('reason') or 'XFOIL did not converge'
                         diagnostics.append(dict(plan, status='failed', reason=failure, solver=audit))
@@ -290,11 +299,13 @@ def execute(settings_path, output, *, mode=None, value_kind=None, dynamic_pressu
                             record.update(reason=str(exc), laminar_confirmed='false')
                         integral_rows.append(record)
     notes = [
-        'Geometry comes from supplied sections, not the earlier left-wing template.',
+        'Geometry comes from supplied sections; coordinates and reference lengths must already be at wind-tunnel model scale.',
         'Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred.',
         'All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order.',
         'Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow.',
     ]
+    if settings.get('data_origin'):
+        notes.insert(0, str(settings['data_origin']))
     if settings['mode'] == 'curves':
         notes.append('Cp integration uses true section arc length and the explicitly selected initial-thickness assumption.')
         notes.append('synthetic_le_zero is a demonstration assumption; Cp=1 at the geometric LE is not exact compressible stagnation.')

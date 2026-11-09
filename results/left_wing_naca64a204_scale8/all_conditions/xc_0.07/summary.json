@@ -1,0 +1,506 @@
+{
+  "name": "NACA 64A204 left wing, model scale 1:8: 7% chord (xfoil)",
+  "data_origin": "Original user left-wing planform scaled uniformly 1:8 (all lengths /8 and area /64); model MAC=0.578625 m; root/tip chords=0.695/0.125 m. NACA 64A204 from the recorded PDAS source is used at every section with zero twist. Angles refer to the nominal NACA chord/global X; the geometric-LE chord rotation is corrected in XFOIL local alpha. Mach=0.2; model-MAC Reynolds numbers 3e6, 5e6, 8e6; angles 0,1,2 degrees. These Reynolds numbers are not divided by 8. Independent 2D XFOIL strips do not solve 3D sweep flow. Geometry comes from supplied sections; coordinates and reference lengths must already be at wind-tunnel model scale. Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred. All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order. Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow. XFOIL computes its own Cp from geometry; imported Cp is not prescribed to its viscous solver. The undisturbed calculation allows natural transition; the requested trip is not imposed in XFOIL. DUMP supplies integral quantities, not resolved u(y). Low-Mach Hk/theta reconstruction is approximate. Re_k reconstruction uses constant freestream kinematic viscosity; DUMP does not provide nu(y) or wall temperature. Laminar confirmation is predicted by the solver transition model, not established experimentally.",
+  "source": "integral",
+  "status": "not_feasible",
+  "overrides": {},
+  "calibration": {
+    "critical_re_k": 600.0,
+    "min_re_x": 100000.0,
+    "max_edge_mach": 0.95,
+    "notes": "Subsonic equiaxed distributed grit; NASA TN D-3579. Mach cap 0.95 is a tool guard."
+  },
+  "height_margin": 1.1,
+  "max_k_delta99": 0.8,
+  "design": [
+    {
+      "eta": 0.0,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.6950000000000024,
+      "y_span_m": -0.166625,
+      "x_global_m": 1.208649996302222,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0147; state6: Trip is at/downstream of predicted upper transition x/c=0.0103; state9: Trip is at/downstream of predicted upper transition x/c=0.0102",
+      "height_mm": null
+    },
+    {
+      "eta": 0.0,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.6950000000000024,
+      "y_span_m": -0.166625,
+      "x_global_m": 1.208649996302222,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.05000000000000003,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.6665000000000009,
+      "y_span_m": -0.19735625,
+      "x_global_m": 1.2271362464538573,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0151; state6: Trip is at/downstream of predicted upper transition x/c=0.0104; state9: Trip is at/downstream of predicted upper transition x/c=0.0104",
+      "height_mm": null
+    },
+    {
+      "eta": 0.05000000000000003,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.6665000000000009,
+      "y_span_m": -0.19735625,
+      "x_global_m": 1.2271362464538573,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.1,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.6379999999999993,
+      "y_span_m": -0.2280875,
+      "x_global_m": 1.2456224966054927,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0156; state6: Trip is at/downstream of predicted upper transition x/c=0.0105; state9: Trip is at/downstream of predicted upper transition x/c=0.0105",
+      "height_mm": null
+    },
+    {
+      "eta": 0.1,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.6379999999999993,
+      "y_span_m": -0.2280875,
+      "x_global_m": 1.2456224966054927,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.15,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.6094999999999979,
+      "y_span_m": -0.25881875,
+      "x_global_m": 1.2641087467571281,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.016; state6: Trip is at/downstream of predicted upper transition x/c=0.0105; state9: Trip is at/downstream of predicted upper transition x/c=0.0111",
+      "height_mm": null
+    },
+    {
+      "eta": 0.15,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.6094999999999979,
+      "y_span_m": -0.25881875,
+      "x_global_m": 1.2641087467571281,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.19999999999999998,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.5809999999999962,
+      "y_span_m": -0.28955,
+      "x_global_m": 1.2825949969087636,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0164; state6: Trip is at/downstream of predicted upper transition x/c=0.0106; state9: Trip is at/downstream of predicted upper transition x/c=0.0111",
+      "height_mm": null
+    },
+    {
+      "eta": 0.19999999999999998,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.5809999999999962,
+      "y_span_m": -0.28955,
+      "x_global_m": 1.2825949969087636,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.25000000000000006,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.5525000000000045,
+      "y_span_m": -0.32028125,
+      "x_global_m": 1.3010812470603996,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0168; state6: Trip is at/downstream of predicted upper transition x/c=0.0111; state9: Trip is at/downstream of predicted upper transition x/c=0.0128",
+      "height_mm": null
+    },
+    {
+      "eta": 0.25000000000000006,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.5525000000000045,
+      "y_span_m": -0.32028125,
+      "x_global_m": 1.3010812470603996,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.30000000000000004,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.5240000000000031,
+      "y_span_m": -0.3510125,
+      "x_global_m": 1.319567497212035,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0171; state6: Trip is at/downstream of predicted upper transition x/c=0.0118; state9: Trip is at/downstream of predicted upper transition x/c=0.0104",
+      "height_mm": null
+    },
+    {
+      "eta": 0.30000000000000004,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.5240000000000031,
+      "y_span_m": -0.3510125,
+      "x_global_m": 1.319567497212035,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.35000000000000003,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.49550000000000155,
+      "y_span_m": -0.38174375,
+      "x_global_m": 1.3380537473636704,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0183; state6: Trip is at/downstream of predicted upper transition x/c=0.0126; state9: Trip is at/downstream of predicted upper transition x/c=0.0068",
+      "height_mm": null
+    },
+    {
+      "eta": 0.35000000000000003,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.49550000000000155,
+      "y_span_m": -0.38174375,
+      "x_global_m": 1.3380537473636704,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.39999999999999997,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.46700000000000014,
+      "y_span_m": -0.412475,
+      "x_global_m": 1.3565399975153059,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0197; state6: Trip is at/downstream of predicted upper transition x/c=0.0134; state9: Trip is at/downstream of predicted upper transition x/c=0.0101",
+      "height_mm": null
+    },
+    {
+      "eta": 0.39999999999999997,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.46700000000000014,
+      "y_span_m": -0.412475,
+      "x_global_m": 1.3565399975153059,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.45,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.43849999999999856,
+      "y_span_m": -0.44320625,
+      "x_global_m": 1.3750262476669413,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0211; state6: Trip is at/downstream of predicted upper transition x/c=0.0142; state9: Trip is at/downstream of predicted upper transition x/c=0.0103",
+      "height_mm": null
+    },
+    {
+      "eta": 0.45,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.43849999999999856,
+      "y_span_m": -0.44320625,
+      "x_global_m": 1.3750262476669413,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.5,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.40999999999999714,
+      "y_span_m": -0.4739375,
+      "x_global_m": 1.3935124978185767,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0226; state6: Trip is at/downstream of predicted upper transition x/c=0.0149; state9: Trip is at/downstream of predicted upper transition x/c=0.0104",
+      "height_mm": null
+    },
+    {
+      "eta": 0.5,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.40999999999999714,
+      "y_span_m": -0.4739375,
+      "x_global_m": 1.3935124978185767,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.5499999999999999,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.38149999999999545,
+      "y_span_m": -0.50466875,
+      "x_global_m": 1.411998747970212,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0241; state6: Trip is at/downstream of predicted upper transition x/c=0.0156; state9: Trip is at/downstream of predicted upper transition x/c=0.0105",
+      "height_mm": null
+    },
+    {
+      "eta": 0.5499999999999999,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.38149999999999545,
+      "y_span_m": -0.50466875,
+      "x_global_m": 1.411998747970212,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.6,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.3530000000000038,
+      "y_span_m": -0.5354,
+      "x_global_m": 1.4304849981218482,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0279; state6: Trip is at/downstream of predicted upper transition x/c=0.0163; state9: Trip is at/downstream of predicted upper transition x/c=0.0108",
+      "height_mm": null
+    },
+    {
+      "eta": 0.6,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.3530000000000038,
+      "y_span_m": -0.5354,
+      "x_global_m": 1.4304849981218482,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.6499999999999999,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.3245000000000024,
+      "y_span_m": -0.56613125,
+      "x_global_m": 1.4489712482734836,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.032; state6: Trip is at/downstream of predicted upper transition x/c=0.0169; state9: Trip is at/downstream of predicted upper transition x/c=0.0119",
+      "height_mm": null
+    },
+    {
+      "eta": 0.6499999999999999,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.3245000000000024,
+      "y_span_m": -0.56613125,
+      "x_global_m": 1.4489712482734836,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.7,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.2960000000000008,
+      "y_span_m": -0.5968625,
+      "x_global_m": 1.467457498425119,
+      "status": "invalid",
+      "reason": "state3: Trip is at/downstream of predicted upper transition x/c=0.0388; state6: Trip is at/downstream of predicted upper transition x/c=0.0184; state9: Trip is at/downstream of predicted upper transition x/c=0.0132",
+      "height_mm": null
+    },
+    {
+      "eta": 0.7,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.2960000000000008,
+      "y_span_m": -0.5968625,
+      "x_global_m": 1.467457498425119,
+      "status": "infeasible",
+      "reason": "no common height satisfies requirement, k/delta99 cap, profile coverage and hardware choices",
+      "height_mm": null
+    },
+    {
+      "eta": 0.7499999999999999,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.2674999999999994,
+      "y_span_m": -0.62759375,
+      "x_global_m": 1.4859437485767544,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state6: Trip is at/downstream of predicted upper transition x/c=0.0207; state9: Trip is at/downstream of predicted upper transition x/c=0.0144",
+      "height_mm": null
+    },
+    {
+      "eta": 0.7499999999999999,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.2674999999999994,
+      "y_span_m": -0.62759375,
+      "x_global_m": 1.4859437485767544,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed",
+      "height_mm": null
+    },
+    {
+      "eta": 0.8,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.23899999999999774,
+      "y_span_m": -0.658325,
+      "x_global_m": 1.5044299987283898,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state6: Trip is at/downstream of predicted upper transition x/c=0.0232; state9: Trip is at/downstream of predicted upper transition x/c=0.0156",
+      "height_mm": null
+    },
+    {
+      "eta": 0.8,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.23899999999999774,
+      "y_span_m": -0.658325,
+      "x_global_m": 1.5044299987283898,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed",
+      "height_mm": null
+    },
+    {
+      "eta": 0.8500000000000001,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.2104999999999963,
+      "y_span_m": -0.68905625,
+      "x_global_m": 1.5229162488800252,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state6: Trip is at/downstream of predicted upper transition x/c=0.0282; state9: Trip is at/downstream of predicted upper transition x/c=0.0167",
+      "height_mm": null
+    },
+    {
+      "eta": 0.8500000000000001,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.2104999999999963,
+      "y_span_m": -0.68905625,
+      "x_global_m": 1.5229162488800252,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed",
+      "height_mm": null
+    },
+    {
+      "eta": 0.9,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.18200000000000469,
+      "y_span_m": -0.7197875,
+      "x_global_m": 1.5414024990316613,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state6: Trip is at/downstream of predicted upper transition x/c=0.037; state9: Trip is at/downstream of predicted upper transition x/c=0.0188",
+      "height_mm": null
+    },
+    {
+      "eta": 0.9,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.18200000000000469,
+      "y_span_m": -0.7197875,
+      "x_global_m": 1.5414024990316613,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed",
+      "height_mm": null
+    },
+    {
+      "eta": 0.9500000000000001,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.15350000000000305,
+      "y_span_m": -0.75051875,
+      "x_global_m": 1.5598887491832967,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state4: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state5: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state6: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state9: Trip is at/downstream of predicted upper transition x/c=0.0226",
+      "height_mm": null
+    },
+    {
+      "eta": 0.9500000000000001,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.15350000000000305,
+      "y_span_m": -0.75051875,
+      "x_global_m": 1.5598887491832967,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state4: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state5: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state6: station Re_x is below calibration minimum; downstream position or calibrated criterion needed",
+      "height_mm": null
+    },
+    {
+      "eta": 1.0,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 0.12500000000000164,
+      "y_span_m": -0.78125,
+      "x_global_m": 1.578374999334932,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state4: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state5: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state6: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state9: Trip is at/downstream of predicted upper transition x/c=0.0305",
+      "height_mm": null
+    },
+    {
+      "eta": 1.0,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 0.12500000000000164,
+      "y_span_m": -0.78125,
+      "x_global_m": 1.578374999334932,
+      "status": "invalid",
+      "reason": "state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state4: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state5: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state6: station Re_x is below calibration minimum; downstream position or calibrated criterion needed",
+      "height_mm": null
+    }
+  ],
+  "uniform_height": {
+    "status": "unavailable",
+    "height_mm": null
+  },
+  "warnings": [
+    "Preliminary trip sizing, not a prediction or guarantee of transition or downstream turbulent development.",
+    "Only the supplied discrete conditions are covered; no guarantee between sampled angles of attack or Reynolds numbers.",
+    "Sweep sets placement geometry only. Crossflow, attachment-line transition, and 3D streamline histories are not solved.",
+    "Height is exposed protrusion above the model surface, including mounting effects; verify actual installed height.",
+    "Height margin and k/delta99 cap are user design policies, not universal transition correlations.",
+    "Integral mode reconstructs u(y) from theta and shape factor; this is not a resolved wall-normal solver profile.",
+    "XFOIL DUMP H/Hk formats are checked and converted to Hk; theta and freestream viscosity are transferred approximately at low Mach.",
+    "Solver cases must converge and the requested station must remain attached and upstream of natural transition."
+  ],
+  "inputs": [
+    {
+      "path": "config_xc_0.07.json",
+      "path_base": "configuration directory",
+      "sha256": "76d791cca1ca7119b616c77f3a909e0768e0c9086a3972dd08eec20766c31eb9"
+    },
+    {
+      "path": "boundary_layer.csv",
+      "path_base": "configuration directory",
+      "sha256": "06733b9bf3562332fb771e58d43eb30c5c70953862865458a88bc023b47a22ad"
+    }
+  ],
+  "plot_created": true
+}

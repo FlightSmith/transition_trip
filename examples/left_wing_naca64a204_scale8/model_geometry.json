@@ -1,0 +1,168 @@
+{
+  "scale": 0.125,
+  "full_scale": {
+    "root": {
+      "y_m": -1.333,
+      "x_le_m": 9.28,
+      "chord_m": 5.56
+    },
+    "tip": {
+      "y_m": -6.25,
+      "x_le_m": 12.557,
+      "chord_m": 1.0
+    },
+    "analyzed_panel_span_m": 4.917,
+    "leading_edge_sweep_deg": 33.68199959181396,
+    "provided_reference_area_m2": 49.0,
+    "provided_reference_mac_m": 4.629,
+    "linear_panel_area_m2": 16.12776,
+    "linear_panel_trapezoid_mac_m": 3.8082926829268287,
+    "twice_linear_panel_area_m2": 32.25552,
+    "reference_note": "User-provided Sref=49 m^2 and MAC=4.629 m are retained as references; they are not replaced by values derived from this single trapezoidal panel. Their different values may reflect a different reference definition or geometry not included here; no reconciliation is assumed.",
+    "coordinate_note": "Station eta is fractional distance from the supplied root to tip. Station y_m is global spanwise Y (negative on this left panel); profile CSV y_m is instead local wall-normal distance. Global XLE and chord are linearly interpolated between the supplied endpoints."
+  },
+  "model_reference_mac_m": 0.578625,
+  "model_reference_area_m2": 0.765625,
+  "model_stations": [
+    {
+      "eta": 0.0,
+      "y_m": -0.166625,
+      "x_le_m": 1.16,
+      "chord_m": 0.695
+    },
+    {
+      "eta": 0.05,
+      "y_m": -0.19735625,
+      "x_le_m": 1.18048125,
+      "chord_m": 0.6665
+    },
+    {
+      "eta": 0.1,
+      "y_m": -0.2280875,
+      "x_le_m": 1.2009625,
+      "chord_m": 0.6379999999999999
+    },
+    {
+      "eta": 0.15000000000000002,
+      "y_m": -0.25881875,
+      "x_le_m": 1.22144375,
+      "chord_m": 0.6094999999999999
+    },
+    {
+      "eta": 0.2,
+      "y_m": -0.28955,
+      "x_le_m": 1.241925,
+      "chord_m": 0.581
+    },
+    {
+      "eta": 0.25,
+      "y_m": -0.32028124999999996,
+      "x_le_m": 1.26240625,
+      "chord_m": 0.5525
+    },
+    {
+      "eta": 0.30000000000000004,
+      "y_m": -0.3510125,
+      "x_le_m": 1.2828875,
+      "chord_m": 0.5239999999999999
+    },
+    {
+      "eta": 0.35000000000000003,
+      "y_m": -0.38174375000000005,
+      "x_le_m": 1.30336875,
+      "chord_m": 0.49549999999999994
+    },
+    {
+      "eta": 0.4,
+      "y_m": -0.41247500000000004,
+      "x_le_m": 1.32385,
+      "chord_m": 0.46699999999999997
+    },
+    {
+      "eta": 0.45,
+      "y_m": -0.44320625,
+      "x_le_m": 1.34433125,
+      "chord_m": 0.43849999999999995
+    },
+    {
+      "eta": 0.5,
+      "y_m": -0.4739375,
+      "x_le_m": 1.3648125,
+      "chord_m": 0.41
+    },
+    {
+      "eta": 0.55,
+      "y_m": -0.50466875,
+      "x_le_m": 1.38529375,
+      "chord_m": 0.38149999999999995
+    },
+    {
+      "eta": 0.6000000000000001,
+      "y_m": -0.5354,
+      "x_le_m": 1.405775,
+      "chord_m": 0.3529999999999999
+    },
+    {
+      "eta": 0.65,
+      "y_m": -0.56613125,
+      "x_le_m": 1.42625625,
+      "chord_m": 0.32449999999999996
+    },
+    {
+      "eta": 0.7000000000000001,
+      "y_m": -0.5968625000000001,
+      "x_le_m": 1.4467375,
+      "chord_m": 0.29599999999999993
+    },
+    {
+      "eta": 0.75,
+      "y_m": -0.62759375,
+      "x_le_m": 1.46721875,
+      "chord_m": 0.26749999999999996
+    },
+    {
+      "eta": 0.8,
+      "y_m": -0.658325,
+      "x_le_m": 1.4877,
+      "chord_m": 0.239
+    },
+    {
+      "eta": 0.8500000000000001,
+      "y_m": -0.68905625,
+      "x_le_m": 1.50818125,
+      "chord_m": 0.21049999999999996
+    },
+    {
+      "eta": 0.9,
+      "y_m": -0.7197875,
+      "x_le_m": 1.5286625,
+      "chord_m": 0.18199999999999994
+    },
+    {
+      "eta": 0.9500000000000001,
+      "y_m": -0.75051875,
+      "x_le_m": 1.54914375,
+      "chord_m": 0.15349999999999997
+    },
+    {
+      "eta": 1.0,
+      "y_m": -0.78125,
+      "x_le_m": 1.569625,
+      "chord_m": 0.125
+    }
+  ],
+  "airfoil_file": "naca64a204.dat",
+  "airfoil_sha256": "1618a7a74cab75532e4402146691f5aef38ee3db5de3895de506e57eafa1682e",
+  "coordinate_chord_normalization": {
+    "leading_edge": [
+      -6.637178e-06,
+      0.000389894321
+    ],
+    "trailing_edge": [
+      1.0,
+      0.0
+    ],
+    "chord": 1.0000067131862835
+  },
+  "notes": "Original user left-wing planform scaled uniformly 1:8 (all lengths /8 and area /64); model MAC=0.578625 m; root/tip chords=0.695/0.125 m. NACA 64A204 from the recorded PDAS source is used at every section with zero twist. Angles refer to the nominal NACA chord/global X; the geometric-LE chord rotation is corrected in XFOIL local alpha. Mach=0.2; model-MAC Reynolds numbers 3e6, 5e6, 8e6; angles 0,1,2 degrees. These Reynolds numbers are not divided by 8. Independent 2D XFOIL strips do not solve 3D sweep flow."
+}

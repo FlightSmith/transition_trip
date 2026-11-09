@@ -263,7 +263,12 @@ def run_xfoil(executable, airfoil_path, workdir, reynolds_local, mach, alpha_deg
         result["returncode"] = completed.returncode
         if completed.returncode:
             raise ValueError(f"XFOIL exited with code {completed.returncode}")
-        if re.search(r"convergence\s+failed|not\s+converged|floating[ -]point|segmentation", log, re.I):
+        # MRCHDU/MRCHUE can warn during an intermediate BL march and then
+        # recover. VISCAL is the final coupled-solution failure. In a fresh
+        # viscous run, PLRADD writes a polar row only when LVCONV is true.
+        result['solver_warnings'] = [line.strip() for line in log.splitlines()
+                                     if re.search(r'MRCH(?:DU|UE):.*Convergence\s+failed', line, re.I)]
+        if re.search(r"VISCAL\s*:\s*Convergence\s+failed|floating[ -]point|segmentation", log, re.I):
             raise ValueError("XFOIL reported convergence or numerical failure")
         polar = parse_polar(directory / "polar.txt", alpha_deg)
         if (abs(polar["mach"] - mach) > .00051 or abs(polar["ncrit"] - ncrit) > .00051
@@ -293,6 +298,33 @@ def run_xfoil(executable, airfoil_path, workdir, reynolds_local, mach, alpha_deg
     (directory / "stdout.txt").write_text(log, encoding="utf-8")
     result["stdout_path"] = str(directory / "stdout.txt")
     result["commands_path"] = str(directory / "commands.txt")
+    return result
+
+
+def run_xfoil_with_retries(executable, airfoil_path, workdir, reynolds_local, mach, alpha_deg,
+                           *, ncrit=9., timeout_s=60., iterations=200, panels=200,
+                           retry_panels=(), retry_iterations=600):
+    """Retry only unconverged solutions with explicit, logged numerical settings.
+
+    Every attempt uses the same geometry, physics and operating point, in a
+    fresh folder. A converged solution is never replaced to seek a preferred
+    transition location or grit height.
+    """
+    for count in retry_panels:
+        if isinstance(count, bool) or int(count) != count or not 40 <= count <= 280:
+            raise ValueError('retry_panels entries must be integers from 40 to 280')
+    if retry_panels and (isinstance(retry_iterations, bool) or int(retry_iterations) != retry_iterations
+                         or not 1 <= retry_iterations <= 10000):
+        raise ValueError('retry_iterations must be an integer from 1 to 10000')
+    attempts = []
+    for count, limit in [(panels, iterations), *((count, retry_iterations) for count in retry_panels)]:
+        result = run_xfoil(executable, airfoil_path, workdir, reynolds_local, mach, alpha_deg,
+                           ncrit=ncrit, timeout_s=timeout_s, iterations=limit, panels=count)
+        attempts.append({key: result[key] for key in ('workdir', 'converged', 'reason', 'panels',
+                         'iterations', 'stdout_path', 'commands_path') if key in result})
+        if result['converged']:
+            break
+    result['attempts'] = attempts
     return result
 
 

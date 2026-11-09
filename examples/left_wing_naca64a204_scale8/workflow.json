@@ -1,0 +1,90 @@
+{
+  "schema_version": 1,
+  "name": "NACA 64A204 left wing, model scale 1:8",
+  "input_directory": "sections",
+  "data_start_line": 8,
+  "section_state": 1,
+  "mode": "xfoil",
+  "value_kind": "cp",
+  "mach": 0.2,
+  "reynolds_mac": 8000000.0,
+  "reference_mac_m": 0.578625,
+  "temperature_k": 288.15,
+  "states": [
+    {
+      "state": 1,
+      "alpha_deg": 0.0,
+      "reynolds_mac": 3000000.0
+    },
+    {
+      "state": 2,
+      "alpha_deg": 1.0,
+      "reynolds_mac": 3000000.0
+    },
+    {
+      "state": 3,
+      "alpha_deg": 2.0,
+      "reynolds_mac": 3000000.0
+    },
+    {
+      "state": 4,
+      "alpha_deg": 0.0,
+      "reynolds_mac": 5000000.0
+    },
+    {
+      "state": 5,
+      "alpha_deg": 1.0,
+      "reynolds_mac": 5000000.0
+    },
+    {
+      "state": 6,
+      "alpha_deg": 2.0,
+      "reynolds_mac": 5000000.0
+    },
+    {
+      "state": 7,
+      "alpha_deg": 0.0,
+      "reynolds_mac": 8000000.0
+    },
+    {
+      "state": 8,
+      "alpha_deg": 1.0,
+      "reynolds_mac": 8000000.0
+    },
+    {
+      "state": 9,
+      "alpha_deg": 2.0,
+      "reynolds_mac": 8000000.0
+    }
+  ],
+  "positions_xc": [
+    0.07,
+    0.1,
+    0.12
+  ],
+  "alpha_reference": "global_x",
+  "cp_initialization": {
+    "method": "synthetic_le_zero"
+  },
+  "trip": {
+    "type": "grit",
+    "height_margin": 1.1,
+    "max_k_delta99": 0.8,
+    "available_heights_mm": []
+  },
+  "xfoil": {
+    "executable": "xfoil",
+    "ncrit": 9.0,
+    "iterations": 200,
+    "timeout_s": 60.0,
+    "panels": 280,
+    "retry_panels": [
+      280,
+      240,
+      200
+    ],
+    "retry_iterations": 600
+  },
+  "reference_area_m2": 0.765625,
+  "data_origin": "Original user left-wing planform scaled uniformly 1:8 (all lengths /8 and area /64); model MAC=0.578625 m; root/tip chords=0.695/0.125 m. NACA 64A204 from the recorded PDAS source is used at every section with zero twist. Angles refer to the nominal NACA chord/global X; the geometric-LE chord rotation is corrected in XFOIL local alpha. Mach=0.2; model-MAC Reynolds numbers 3e6, 5e6, 8e6; angles 0,1,2 degrees. These Reynolds numbers are not divided by 8. Independent 2D XFOIL strips do not solve 3D sweep flow."
+}

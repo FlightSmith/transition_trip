@@ -217,6 +217,75 @@ condition-level reasons; the workflow returns a nonzero exit code if the full
 requested envelope is not feasible. Running again into the same output folder
 replaces generated tables/reports, so use separate folders to retain runs.
 
+## Original left wing at 1:8 scale with NACA 64A204
+
+`run_scaled_naca64a204.py` prepares and analyzes the original left-wing
+planform at **1:8 scale**, using the same **NACA 64A204** section everywhere
+with **zero twist**. It evaluates **Mach 0.2**, **Re_MAC = 3, 5, and 8 million**,
+and **0, 1, and 2 degrees** incidence, at **7%, 10%, and 12% local chord** on
+both surfaces. The 21 span stations and nine tunnel/AoA combinations define
+**189 XFOIL operating points**; the three trip positions reuse those solutions.
+This thin-airfoil case starts with 280 panels and 200 iterations. Failed solves
+are retried with 600 iterations at 280, then 240, then 200 panels; every attempt
+is retained. Converged solutions are never replaced to obtain a preferred trip
+result. Intermediate boundary-layer march warnings are recorded; the final
+coupled convergence and a matching fresh viscous polar point are required.
+
+From the project folder on Windows, after setup and installing XFOIL:
+
+```powershell
+.\.venv\Scripts\python.exe run_scaled_naca64a204.py --xfoil-exe "C:\tools\XFOIL\xfoil.exe"
+```
+
+On macOS/Linux, use `.venv/bin/python` and a native XFOIL executable. Alternatively
+set `XFOIL_EXE` or make `xfoil` available on PATH. Useful rerun options are:
+
+- `--prepare-only`: regenerate model sections, settings, and the solver plan
+  without executing XFOIL or producing trip recommendations.
+- `--summarize-only`: rebuild the comparison and per-Re reports from saved
+  solver records; it does not rerun XFOIL.
+- `--no-plot`: skip figures. `--output PATH` selects a separate result folder.
+
+The default comparison is
+`results/left_wing_naca64a204_scale8/report.html`, with `comparison.csv` and
+`comparison_summary.json` beside it. `re3e6/`, `re5e6/`, and `re8e6/` contain
+separate Reynolds-number envelopes over the three angles; `all_conditions/`
+contains the combined nine-condition envelope, shared solver evidence, and
+per-position reports. A complete report may still describe an infeasible
+envelope and return exit code 2; inspect the rejection reasons rather than
+treating missing heights as zero.
+
+Every original dimensional coordinate and chord is divided by 8, and reference
+area is divided by 64. The model has **MAC 0.578625 m**, **root chord 0.695 m**,
+**tip chord 0.125 m**, and **reference area 0.765625 m²**. The specified Reynolds
+numbers apply to this **model MAC** and are **not divided by 8**. Local section
+Reynolds numbers follow `Re_local = Re_MAC * local_chord / model_MAC`. The
+reference area is retained as geometry metadata and does not set trip height.
+
+The 401-point airfoil was generated from the PDAS NACA456 source algorithm at
+its native mapping points, with the 64A thickness family and modified meanline
+for NACA 64A204. Comparison with the published coordinate table differed by at
+most approximately **5.2×10⁻⁷ chord**; this checks geometry, not aerodynamic
+accuracy. See the recorded source, method, limitations, and hashes in
+[`airfoil_source.json`](examples/left_wing_naca64a204_scale8/airfoil_source.json).
+`python generate_naca64a204.py --out DIRECTORY` reproduces the source airfoil
+and its verification from the bundled mapping arrays and published table,
+without a network connection or Fortran compiler.
+The normalized coordinates, generated sections, workflow, and model geometry
+are retained in `examples/left_wing_naca64a204_scale8/`. Angles refer to the
+nominal NACA chord/global X; the small geometric-LE chord rotation is corrected
+when creating the local XFOIL angle, so it is not introduced as spanwise twist.
+
+The default grit criterion requires `Re_x >= 100000`. At Re_MAC = 3 million,
+the tip does not meet that requirement at any of these three positions. Thus
+the default criterion cannot provide a full-span uniform height covering all
+three Reynolds numbers; this is a calibration-applicability limit, not proof
+that the tip cannot be tripped. Predicted natural transition can independently
+exclude stations, particularly on the upper surface. Retain those invalid
+stations in the comparison. The same low-Mach integral/profile reconstruction
+limits apply, and independent 2D XFOIL sections do not solve the swept wing's
+three-dimensional flow.
+
 ## Use your own Cp distribution
 
 The ready-to-copy left-wing templates are in `examples/left_wing_cp/`.

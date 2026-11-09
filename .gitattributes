@@ -13,3 +13,4 @@
 examples/m6_synthetic/*.csv -text
 examples/m6_synthetic/*.json -text
 synthetic_Cp/** -text
+examples/left_wing_naca64a204_scale8/sections/* text eol=lf

@@ -1,0 +1,239 @@
+{
+  "schema_version": 1,
+  "name": "NACA 64A204 left wing, model scale 1:8: 10% chord (xfoil)",
+  "data_origin": "Original user left-wing planform scaled uniformly 1:8 (all lengths /8 and area /64); model MAC=0.578625 m; root/tip chords=0.695/0.125 m. NACA 64A204 from the recorded PDAS source is used at every section with zero twist. Angles refer to the nominal NACA chord/global X; the geometric-LE chord rotation is corrected in XFOIL local alpha. Mach=0.2; model-MAC Reynolds numbers 3e6, 5e6, 8e6; angles 0,1,2 degrees. These Reynolds numbers are not divided by 8. Independent 2D XFOIL strips do not solve 3D sweep flow. Geometry comes from supplied sections; coordinates and reference lengths must already be at wind-tunnel model scale. Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred. All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order. Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow. XFOIL computes its own Cp from geometry; imported Cp is not prescribed to its viscous solver. The undisturbed calculation allows natural transition; the requested trip is not imposed in XFOIL. DUMP supplies integral quantities, not resolved u(y). Low-Mach Hk/theta reconstruction is approximate. Re_k reconstruction uses constant freestream kinematic viscosity; DUMP does not provide nu(y) or wall temperature. Laminar confirmation is predicted by the solver transition model, not established experimentally.",
+  "wing": {
+    "semispan_m": 0.614625,
+    "sweep_le_deg": 33.68199959181396,
+    "reference_length_m": 0.578625,
+    "stations": [
+      {
+        "eta": 0.0,
+        "y_m": -0.166625,
+        "x_le_m": 1.16,
+        "chord_m": 0.6950000000000024,
+        "streamwise_chord_m": 0.6949999471746
+      },
+      {
+        "eta": 0.05000000000000003,
+        "y_m": -0.19735625,
+        "x_le_m": 1.18048125,
+        "chord_m": 0.6665000000000009,
+        "streamwise_chord_m": 0.6664999493408201
+      },
+      {
+        "eta": 0.1,
+        "y_m": -0.2280875,
+        "x_le_m": 1.2009625,
+        "chord_m": 0.6379999999999993,
+        "streamwise_chord_m": 0.63799995150704
+      },
+      {
+        "eta": 0.15,
+        "y_m": -0.25881875,
+        "x_le_m": 1.22144375,
+        "chord_m": 0.6094999999999979,
+        "streamwise_chord_m": 0.6094999536732602
+      },
+      {
+        "eta": 0.19999999999999998,
+        "y_m": -0.28955,
+        "x_le_m": 1.241925,
+        "chord_m": 0.5809999999999962,
+        "streamwise_chord_m": 0.58099995583948
+      },
+      {
+        "eta": 0.25000000000000006,
+        "y_m": -0.32028125,
+        "x_le_m": 1.26240625,
+        "chord_m": 0.5525000000000045,
+        "streamwise_chord_m": 0.55249995800571
+      },
+      {
+        "eta": 0.30000000000000004,
+        "y_m": -0.3510125,
+        "x_le_m": 1.2828875,
+        "chord_m": 0.5240000000000031,
+        "streamwise_chord_m": 0.5239999601719301
+      },
+      {
+        "eta": 0.35000000000000003,
+        "y_m": -0.38174375,
+        "x_le_m": 1.30336875,
+        "chord_m": 0.49550000000000155,
+        "streamwise_chord_m": 0.49549996233814997
+      },
+      {
+        "eta": 0.39999999999999997,
+        "y_m": -0.412475,
+        "x_le_m": 1.32385,
+        "chord_m": 0.46700000000000014,
+        "streamwise_chord_m": 0.4669999645043701
+      },
+      {
+        "eta": 0.45,
+        "y_m": -0.44320625,
+        "x_le_m": 1.34433125,
+        "chord_m": 0.43849999999999856,
+        "streamwise_chord_m": 0.43849996667059
+      },
+      {
+        "eta": 0.5,
+        "y_m": -0.4739375,
+        "x_le_m": 1.3648125,
+        "chord_m": 0.40999999999999714,
+        "streamwise_chord_m": 0.4099999688368101
+      },
+      {
+        "eta": 0.5499999999999999,
+        "y_m": -0.50466875,
+        "x_le_m": 1.38529375,
+        "chord_m": 0.38149999999999545,
+        "streamwise_chord_m": 0.38149997100303
+      },
+      {
+        "eta": 0.6,
+        "y_m": -0.5354,
+        "x_le_m": 1.405775,
+        "chord_m": 0.3530000000000038,
+        "streamwise_chord_m": 0.3529999731692599
+      },
+      {
+        "eta": 0.6499999999999999,
+        "y_m": -0.56613125,
+        "x_le_m": 1.42625625,
+        "chord_m": 0.3245000000000024,
+        "streamwise_chord_m": 0.32449997533548003
+      },
+      {
+        "eta": 0.7,
+        "y_m": -0.5968625,
+        "x_le_m": 1.4467375,
+        "chord_m": 0.2960000000000008,
+        "streamwise_chord_m": 0.29599997750169993
+      },
+      {
+        "eta": 0.7499999999999999,
+        "y_m": -0.62759375,
+        "x_le_m": 1.46721875,
+        "chord_m": 0.2674999999999994,
+        "streamwise_chord_m": 0.26749997966792005
+      },
+      {
+        "eta": 0.8,
+        "y_m": -0.658325,
+        "x_le_m": 1.4877,
+        "chord_m": 0.23899999999999774,
+        "streamwise_chord_m": 0.23899998183413995
+      },
+      {
+        "eta": 0.8500000000000001,
+        "y_m": -0.68905625,
+        "x_le_m": 1.50818125,
+        "chord_m": 0.2104999999999963,
+        "streamwise_chord_m": 0.21049998400036007
+      },
+      {
+        "eta": 0.9,
+        "y_m": -0.7197875,
+        "x_le_m": 1.5286625,
+        "chord_m": 0.18200000000000469,
+        "streamwise_chord_m": 0.18199998616658997
+      },
+      {
+        "eta": 0.9500000000000001,
+        "y_m": -0.75051875,
+        "x_le_m": 1.54914375,
+        "chord_m": 0.15350000000000305,
+        "streamwise_chord_m": 0.15349998833280987
+      },
+      {
+        "eta": 1.0,
+        "y_m": -0.78125,
+        "x_le_m": 1.569625,
+        "chord_m": 0.12500000000000164,
+        "streamwise_chord_m": 0.12499999049902999
+      }
+    ],
+    "reference_area_m2": 0.765625
+  },
+  "conditions": [
+    {
+      "id": "state1",
+      "alpha_deg": 0.0,
+      "mach": 0.2,
+      "reynolds": 3000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state2",
+      "alpha_deg": 1.0,
+      "mach": 0.2,
+      "reynolds": 3000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state3",
+      "alpha_deg": 2.0,
+      "mach": 0.2,
+      "reynolds": 3000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state4",
+      "alpha_deg": 0.0,
+      "mach": 0.2,
+      "reynolds": 5000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state5",
+      "alpha_deg": 1.0,
+      "mach": 0.2,
+      "reynolds": 5000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state6",
+      "alpha_deg": 2.0,
+      "mach": 0.2,
+      "reynolds": 5000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state7",
+      "alpha_deg": 0.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state8",
+      "alpha_deg": 1.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state9",
+      "alpha_deg": 2.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    }
+  ],
+  "trip": {
+    "type": "grit",
+    "height_margin": 1.1,
+    "max_k_delta99": 0.8,
+    "available_heights_mm": [],
+    "position_xc": {
+      "upper": 0.1,
+      "lower": 0.1
+    }
+  },
+  "analysis": {
+    "source": "integral",
+    "integral_file": "boundary_layer.csv"
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "airfoil": "NACA 64A204",
+  "attribution": "Ralph Carmichael, Public Domain Aeronautical Software (PDAS). The source readme.txt states all source code is public domain and open source.",
+  "source_url": "https://www.pdas.com/packages/naca456.zip",
+  "source_zip_sha256": "327f9dae5552803990d0b683dd0e1d6c777562e4e3695b50d8cee80eb412f2c9",
+  "published_table_url": "https://www.pdas.com/sections6a.html#s64A204",
+  "source_html_sha256": "a2a775b6463bf82acab9a2fbe9d3d3e6defabf3fa493ab12a082c9f3669d4f4e",
+  "source_data_file": "source_data.json",
+  "source_description": "PDAS family 7 (64A); nominal thickness .04; modified meanline cl=.2, a=.8.",
+  "method": "Float64 translation of the PDAS native 201-point conformal map and modified mean line; no coarse-table interpolation for output geometry.",
+  "point_count": 401,
+  "nominal_tc": 0.04,
+  "computed_max_native_normal_thickness": 0.03998349321302619,
+  "published_table_comparison_max_abs_chord": 5.163578291050101e-07,
+  "published_table_comparison_by_column_xu_yu_xl_yl": [
+    4.975684768648847e-07,
+    4.816109104334443e-07,
+    4.975684768648847e-07,
+    5.163578291050101e-07
+  ],
+  "validation": "Every coordinate agrees with the published direct table within 1e-6 chord using the original FMM thickness interpolation for the check.",
+  "closed_te": true,
+  "min_x_chord": -6.637177625593017e-06,
+  "coordinate_order": "upper TE to nominal LE to lower TE; shared nominal LE once",
+  "incidence_reference": "Original NACA chord from (0,0) to (1,0). Minimum-x surface point is not the nominal chord origin.",
+  "output_file": "naca64a204.dat",
+  "limitation": "Source-code translation, not execution of the Fortran compiler. Geometric coordinate agreement does not validate XFOIL aerodynamics.",
+  "output_sha256": "1618a7a74cab75532e4402146691f5aef38ee3db5de3895de506e57eafa1682e"
+}

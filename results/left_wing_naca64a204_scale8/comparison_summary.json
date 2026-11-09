@@ -1,0 +1,155 @@
+{
+  "description": "Derived sizing summaries from saved BL integrals; no XFOIL execution",
+  "scale": "1:8",
+  "reference_mac_m": 0.578625,
+  "root_chord_m": 0.695,
+  "tip_chord_m": 0.125,
+  "chart_created": true,
+  "comparison_rows": 24,
+  "groups": [
+    {
+      "scope": "re3e6",
+      "position_xc": 0.07,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "re3e6",
+      "position_xc": 0.1,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "re3e6",
+      "position_xc": 0.12,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "re5e6",
+      "position_xc": 0.07,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "re5e6",
+      "position_xc": 0.1,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "re5e6",
+      "position_xc": 0.12,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "re8e6",
+      "position_xc": 0.07,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "re8e6",
+      "position_xc": 0.1,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "re8e6",
+      "position_xc": 0.12,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 3
+    },
+    {
+      "scope": "all_conditions",
+      "position_xc": 0.07,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 9
+    },
+    {
+      "scope": "all_conditions",
+      "position_xc": 0.1,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 9
+    },
+    {
+      "scope": "all_conditions",
+      "position_xc": 0.12,
+      "status": "not_feasible",
+      "uniform_height": {
+        "status": "unavailable",
+        "height_mm": null
+      },
+      "condition_count": 9
+    }
+  ],
+  "uniform_definition": "One common height passing all supplied stations on both surfaces and all selected conditions",
+  "range_definition": "Minimum/maximum over valid stations only; not a full-panel design if coverage is partial",
+  "inputs": [
+    {
+      "path": "all_conditions/boundary_layer.csv",
+      "sha256": "06733b9bf3562332fb771e58d43eb30c5c70953862865458a88bc023b47a22ad"
+    },
+    {
+      "path": "all_conditions/workflow_summary.json",
+      "sha256": "0c0aa1df63d4202d6c84ea21ec7a9869bb551217d8d710bee92b29baf7cf3741"
+    },
+    {
+      "path": "all_conditions/config_xc_0.07.json",
+      "sha256": "76d791cca1ca7119b616c77f3a909e0768e0c9086a3972dd08eec20766c31eb9"
+    },
+    {
+      "path": "all_conditions/config_xc_0.1.json",
+      "sha256": "042c08a8cbf47a67883e1c5eba04f9ded341e34232afbb94fabbb2eb92e9060e"
+    },
+    {
+      "path": "all_conditions/config_xc_0.12.json",
+      "sha256": "a51d98a08b41f203c71fa24035bb70e48d1a0cb02bb5c6460653711d59503943"
+    }
+  ]
+}

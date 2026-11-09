@@ -1,0 +1,43 @@
+eta,surface,x_c,chord_m,y_span_m,x_global_m,status,reason,height_mm,governing_condition,max_k_delta99,min_re_k
+0.0,upper,0.1,0.6950000000000024,-0.166625,1.2294999947174599,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0147,,,,
+0.0,lower,0.1,0.6950000000000024,-0.166625,1.2294999947174599,feasible,,0.22659959068715854,state1,0.45894574778315705,715.1254573593765
+0.05000000000000003,upper,0.1,0.6665000000000009,-0.19735625,1.247131244934082,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0151,,,,
+0.05000000000000003,lower,0.1,0.6665000000000009,-0.19735625,1.247131244934082,feasible,,0.2251670905769585,state1,0.46270249690006643,714.98090121505
+0.1,upper,0.1,0.6379999999999993,-0.2280875,1.264762495150704,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0156,,,,
+0.1,lower,0.1,0.6379999999999993,-0.2280875,1.264762495150704,feasible,,0.2220204503952773,state1,0.46760553906746827,714.594794162624
+0.15,upper,0.1,0.6094999999999979,-0.25881875,1.282393745367326,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.016,,,,
+0.15,lower,0.1,0.6094999999999979,-0.25881875,1.282393745367326,feasible,,0.2198801905500256,state1,0.47475230587214245,714.306960097969
+0.19999999999999998,upper,0.1,0.5809999999999962,-0.28955,1.300024995583948,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0164,,,,
+0.19999999999999998,lower,0.1,0.5809999999999962,-0.28955,1.300024995583948,feasible,,0.21756677587654077,state1,0.48032217607295863,714.0413542323065
+0.25000000000000006,upper,0.1,0.5525000000000045,-0.32028125,1.317656245800571,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0168,,,,
+0.25000000000000006,lower,0.1,0.5525000000000045,-0.32028125,1.317656245800571,feasible,,0.21495158705750023,state1,0.48579540548647526,713.6961547459287
+0.30000000000000004,upper,0.1,0.5240000000000031,-0.3510125,1.335287496017193,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0171,,,,
+0.30000000000000004,lower,0.1,0.5240000000000031,-0.3510125,1.335287496017193,feasible,,0.2126444124848987,state1,0.49363050819810544,713.3793178336504
+0.35000000000000003,upper,0.1,0.49550000000000155,-0.38174375,1.352918746233815,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0183,,,,
+0.35000000000000003,lower,0.1,0.49550000000000155,-0.38174375,1.352918746233815,feasible,,0.21019354336314677,state1,0.5030129389672945,713.0551886556707
+0.39999999999999997,upper,0.1,0.46700000000000014,-0.412475,1.370549996450437,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0197,,,,
+0.39999999999999997,lower,0.1,0.46700000000000014,-0.412475,1.370549996450437,feasible,,0.20734374579032758,state1,0.510262139602135,712.6291664630826
+0.45,upper,0.1,0.43849999999999856,-0.44320625,1.3881812466670589,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0211,,,,
+0.45,lower,0.1,0.43849999999999856,-0.44320625,1.3881812466670589,feasible,,0.20412144497860046,state1,0.5181045157862076,712.1210208914629
+0.5,upper,0.1,0.40999999999999714,-0.4739375,1.405812496883681,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0226,,,,
+0.5,lower,0.1,0.40999999999999714,-0.4739375,1.405812496883681,feasible,,0.20110877791887966,state1,0.5292612212406863,711.6225555458475
+0.5499999999999999,upper,0.1,0.38149999999999545,-0.50466875,1.423443747100303,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0241,,,,
+0.5499999999999999,lower,0.1,0.38149999999999545,-0.50466875,1.423443747100303,feasible,,0.19804635545675406,state1,0.539533498705064,711.1056211064401
+0.6,upper,0.1,0.3530000000000038,-0.5354,1.441074997316926,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0279,,,,
+0.6,lower,0.1,0.3530000000000038,-0.5354,1.441074997316926,feasible,,0.19461039878148315,state1,0.5495852084991459,709.8094312356073
+0.6499999999999999,upper,0.1,0.3245000000000024,-0.56613125,1.458706247533548,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.032,,,,
+0.6499999999999999,lower,0.1,0.3245000000000024,-0.56613125,1.458706247533548,feasible,,0.1907214934191822,state1,0.5621553778644592,705.8374378380364
+0.7,upper,0.1,0.2960000000000008,-0.5968625,1.47633749775017,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0388,,,,
+0.7,lower,0.1,0.2960000000000008,-0.5968625,1.47633749775017,feasible,,0.18707238805650267,state1,0.5771398246027244,703.3812742373043
+0.7499999999999999,upper,0.1,0.2674999999999994,-0.62759375,1.493968747966792,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0492,,,,
+0.7499999999999999,lower,0.1,0.2674999999999994,-0.62759375,1.493968747966792,feasible,,0.18306045637727522,state1,0.5942075223008996,700.1160393131962
+0.8,upper,0.1,0.23899999999999774,-0.658325,1.511599998183414,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0643,,,,
+0.8,lower,0.1,0.23899999999999774,-0.658325,1.511599998183414,feasible,,0.1787923008401869,state3,0.6154932376334913,697.5168723018193
+0.8500000000000001,upper,0.1,0.2104999999999963,-0.68905625,1.529231248400036,invalid,state3: Trip is at/downstream of predicted upper transition x/c=0.0875,,,,
+0.8500000000000001,lower,0.1,0.2104999999999963,-0.68905625,1.529231248400036,feasible,,0.1747850728171258,state3,0.6392862495066625,695.9339935754716
+0.9,upper,0.1,0.18200000000000469,-0.7197875,1.546862498616659,invalid,state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed,,,,
+0.9,lower,0.1,0.18200000000000469,-0.7197875,1.546862498616659,invalid,state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed,,,,
+0.9500000000000001,upper,0.1,0.15350000000000305,-0.75051875,1.564493748833281,invalid,state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed,,,,
+0.9500000000000001,lower,0.1,0.15350000000000305,-0.75051875,1.564493748833281,invalid,state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed,,,,
+1.0,upper,0.1,0.12500000000000164,-0.78125,1.5821249990499031,invalid,state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed,,,,
+1.0,lower,0.1,0.12500000000000164,-0.78125,1.5821249990499031,invalid,state1: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state2: station Re_x is below calibration minimum; downstream position or calibrated criterion needed; state3: station Re_x is below calibration minimum; downstream position or calibrated criterion needed,,,,
