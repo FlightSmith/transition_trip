@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "name": "Section-curve example: 10% chord (curves)",
+  "data_origin": "Geometry comes from supplied sections, not the earlier left-wing template. Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred. All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order. Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow. Cp integration uses true section arc length and the explicitly selected initial-thickness assumption. synthetic_le_zero is a demonstration assumption; Cp=1 at the geometric LE is not exact compressible stagnation.",
+  "wing": {
+    "semispan_m": 3.75,
+    "sweep_le_deg": 8.530765609948133,
+    "reference_length_m": 4.629,
+    "stations": [
+      {
+        "eta": 0.0,
+        "y_m": -1.25,
+        "x_le_m": 2.1875,
+        "chord_m": 1.75,
+        "streamwise_chord_m": 1.75
+      },
+      {
+        "eta": 1.0,
+        "y_m": -5.0,
+        "x_le_m": 2.75,
+        "chord_m": 1.0,
+        "streamwise_chord_m": 1.0
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "id": "state1",
+      "alpha_deg": 0.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state2",
+      "alpha_deg": 1.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state3",
+      "alpha_deg": 2.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    }
+  ],
+  "trip": {
+    "type": "grit",
+    "height_margin": 1.1,
+    "max_k_delta99": 0.8,
+    "available_heights_mm": [],
+    "position_xc": {
+      "upper": 0.1,
+      "lower": 0.1
+    }
+  },
+  "analysis": {
+    "source": "cp",
+    "cp_file": "cp.csv"
+  }
+}

@@ -6,8 +6,10 @@ angle of attack, then selects a common exposed height at each spanwise station.
 The example uses **10% chord on both surfaces**, as requested.
 
 The calculation is a preliminary engineering estimate. It evaluates a roughness
-Reynolds-number criterion; it does not predict natural transition, the distance
-from the trip to complete transition, or the drag penalty of a particular trip.
+Reynolds-number criterion. The Cp and supplied-profile routes do not predict
+natural transition; the optional XFOIL route uses its own transition prediction
+to check that the proposed trip lies in a laminar region. No route predicts the
+distance from the trip to complete transition or a particular trip's drag penalty.
 Verify the selected trip in the tunnel using an appropriate transition diagnostic.
 
 ## Run after downloading from GitHub
@@ -23,6 +25,8 @@ and installs the dependencies. Then double-click `run_windows.cmd` to choose:
 3. Left-wing Cp-input demonstration at those three positions.
 4. Your own Cp CSV with the supplied left-wing geometry and tunnel condition.
 5. Your own JSON configuration, using either Cp or laminar-profile input.
+6. A folder of section files and matching Cp or pressure curves.
+7. A folder of section files analyzed with an external XFOIL executable.
 
 **macOS/Linux:** run these commands from the extracted project directory:
 
@@ -36,6 +40,182 @@ then run locally. Do not copy `.venv` between computers; run setup on each one.
 The setup and menu use project-relative locations and do not require the
 original computer's paths. Existing example inputs are included in GitHub;
 regenerating them is optional and replaces the selected example files.
+
+## Section files with Cp or pressure curves
+
+The supplied `synthetic_Cp/` folder can be used directly. It contains two
+section shapes and three pressure-coefficient states at each section. Its
+ready-to-run settings are in `examples/section_curves/workflow.json`:
+
+```powershell
+.\run_windows.cmd --section-config .\examples\section_curves\workflow.json --output .\results\section_curves
+```
+
+On macOS/Linux, use `.venv/bin/python run_trip.py` instead of
+`.\run_windows.cmd`. The workflow also runs directly as
+`python section_workflow.py --config WORKFLOW.json --output OUTPUT_DIR`.
+The section workflow JSON is a different input format from the ordinary
+`trip_design.py` sizing configuration.
+
+The confirmed example conditions are Mach **0.2**, **Re_MAC = 8 million**,
+and **MAC = 4.629 m**, with state 1, 2, and 3 mapped to **0, 1, and 2 degrees**.
+The default positions are **7%, 10%, and 12% local chord**, on both surfaces.
+Static temperature defaults to **288.15 K** and is editable in the workflow
+JSON. State IDs are labels; the angles come from the explicit `states` list.
+
+Choose menu option **6** to enter a folder, tunnel conditions, three state
+angles, trip positions, pressure type, and initialization method interactively.
+The menu saves a reusable `workflow.json` in the chosen output directory.
+For different state IDs/counts or per-state tunnel conditions, edit a copy of
+the example workflow JSON instead of using the three-state wizard.
+
+### Raw file format and geometry
+
+- Geometry filenames follow `section_state1_station-1.250`; the two columns
+  are dimensional **X, Z in meters**. Pressure filenames follow
+  `cp_dist_state2_station-1.250`; their columns are dimensional **X** and **Cp
+  or pressure in Pa**, according to `value_kind`. The station suffix is the
+  signed global **Y coordinate in meters**. A text extension is optional.
+- Numeric data begin on **line 8** by default (`data_start_line` is one-based).
+  Each file must contain one two-column curve followed by `*END`. E/D exponent
+  notation and `$`/`#` comments are accepted. Header scaling/offset directives
+  are not applied: export already-scaled physical numbers. The supplied files
+  use identity scaling and zero offsets.
+- Keep the ordered **TE → LE → TE contour**. The first branch may be upper or
+  lower, but each pressure file must use the same branch convention as its
+  section. Geometry determines the upper/lower labels. Do not globally sort X;
+  that would mix the two surfaces. Different pressure sampling grids are mapped
+  separately on each branch without extrapolating beyond the section geometry.
+- `section_state: 1` reuses the state-1 geometry for every pressure state.
+  If additional state-specific section files are present, their geometry must
+  match; changing geometry requires separate workflows.
+
+The actual supplied sections have `X_LE=2.1875 m`, chord `1.75 m` at
+`Y=-1.250 m`, and `X_LE=2.75 m`, chord `1.0 m` at `Y=-5.000 m`. Their vertical
+offsets are `0.025 m` and `0.100 m`. These are **different geometry from the
+earlier left-wing template**; the importer derives geometry from these files.
+Its internal `eta` runs from 0 at the innermost supplied station to 1 at the
+outermost supplied station. It does not infer an unprovided full-wing root,
+tip, or semispan, and it preserves the signed Y values in the output.
+
+The importer splits the surfaces and computes physical contour arc lengths.
+For XFOIL it translates the leading edge to the origin, removes section chord
+incidence, and divides both coordinates by the physical LE-to-TE chord length.
+The normalized airfoil files are written to `airfoils/` for inspection. The
+default `alpha_reference: "section_chord"` treats each specified angle as
+relative to that section's chord. With `"global_x"`, the recorded geometric
+chord incidence is subtracted before calling XFOIL.
+
+### Pressure conversion and initial thickness
+
+Set `value_kind` to `"cp"` for coefficients. For absolute pressure, use
+`"pressure"` or `"absolute_pressure"`; for signed gauge values, use
+`"gauge_pressure"`. Pressure conversion requires both reference values:
+
+```text
+Cp = (input_pressure - static_pressure_pa) / dynamic_pressure_pa
+```
+
+Put `dynamic_pressure_pa` and `static_pressure_pa` in the workflow's global
+`pressure_reference` object, or put those keys directly in a particular
+`states` entry to override them for that state. Dynamic pressure must be
+positive. Samples and static reference must use the **same absolute or gauge
+convention**; absolute pressures must be positive. CLI options `--value-kind`,
+`--dynamic-pressure-pa`, and `--static-pressure-pa` override the saved settings;
+CLI pressure references override both global and per-state values.
+
+These reference pressures only normalize the supplied pressure data. The
+dimensional tunnel state is still determined by Mach, Re_MAC, MAC, and static
+temperature; pressure references do not replace that state automatically.
+Use mutually consistent tunnel measurements and settings.
+
+Cp integration requires an explicit `cp_initialization` choice:
+
+- `{"method": "synthetic_le_zero"}` starts with zero momentum thickness at
+  the geometric LE. This is **only the supplied synthetic demonstration
+  assumption**, not a valid generic initialization for a real wing. Its Cp=1
+  LE values imply finite speed under compressible inversion at Mach 0.2;
+  geometric LE and stagnation must not be silently equated.
+- `{"method": "stagnation_ramp"}` starts at the first positive surface
+  distance with `theta0 = sqrt(0.075 * nu_inf * s0 / Ue0)`. It explicitly
+  assumes a linear velocity rise from a stagnation origin to that point.
+  It is an approximation requiring a justified origin and upstream flow
+  history, particularly at nonzero incidence. The wizard defaults to this
+  choice for folders other than the supplied synthetic example.
+- `"method": "provided"` additionally requires a positive `theta0_m` in
+  the same object, representing the initial momentum thickness at the first
+  retained downstream sample. Supply a physically justified value; missing
+  upstream history is not zero. A state may override `cp_initialization`.
+
+The true arc distance is retained when the LE point is skipped. Initialization
+method, initial position, distance, and thickness are recorded in
+`workflow_summary.json`. Neither the conversion nor the geometry import
+establishes that a real boundary layer is laminar.
+
+## Optional XFOIL section analysis
+
+Install XFOIL separately; it is **not bundled or installed by the Python
+setup**. The [official MIT XFOIL page](https://web.mit.edu/drela/Public/web/xfoil/)
+provides a [Windows 6.99 archive](https://web.mit.edu/drela/Public/web/xfoil/XFOIL6.99.zip)
+and source distributions. Extract the Windows package and point the tool to
+its executable. On macOS/Linux, use a compatible native installation/build;
+the Windows executable is not a native Unix program.
+
+```powershell
+.\run_windows.cmd --section-config .\examples\section_curves\workflow.json --mode xfoil --xfoil-exe "C:\tools\XFOIL\xfoil.exe" --output .\results\section_xfoil
+```
+
+Alternatively choose menu option **7**. The executable can also be selected
+with `XFOIL_EXE`, the workflow's `xfoil.executable`, or `xfoil` on PATH, in
+that precedence after `--xfoil-exe`. The example uses `ncrit=9`, 200 panels,
+200 iterations, and a 60-second timeout per section/state; these are editable
+in the workflow's `xfoil` object. Run with `--prepare-only` to inspect normalized
+airfoils and the solver plan without executing XFOIL or producing trip designs.
+
+Each section uses its own chord Reynolds number:
+
+```text
+Re_local = Re_MAC * section_chord / reference_mac_m
+```
+
+XFOIL computes its **own two-dimensional Cp and integral boundary layer from
+the section geometry**. It does not prescribe the imported wing Cp to its
+viscous solver. The baseline permits natural transition; it does not force
+transition at the requested 7%, 10%, or 12% trip position. A usable result
+requires convergence, positive attached-flow diagnostics, and a sampling
+bracket upstream of the predicted transition. Failures are reported as invalid
+cases, without silently substituting the Cp-based model.
+
+XFOIL's DUMP file contains integral quantities, **not a resolved wall-normal
+velocity profile**. The tool checks H/Hk format differences, obtains kinematic
+shape factor Hk, and reconstructs a quartic profile matched to Hk and momentum
+thickness. Transferring the solver thickness and using constant freestream
+kinematic viscosity are low-Mach approximations; the dump does not supply
+`nu(y)` or a wall-temperature profile. This route remains limited to freestream
+and sampled local Mach at most 0.30 and the supported attached quartic shape
+family. Laminar status is predicted by XFOIL, not established experimentally.
+The [official user primer](https://web.mit.edu/drela/Public/web/xfoil/xfoil_doc.txt)
+describes its integral formulation and transition model.
+
+Both section workflows treat the supplied sections independently. They do not
+solve swept-wing crossflow, attachment-line effects, a full 3D pressure field,
+or unsampled angles/stations. XFOIL and imported-Cp results are different model
+paths and should not be presented as independent validation of one another.
+
+### Section workflow outputs
+
+The output folder contains `workflow_summary.json` with geometry, input hashes,
+initialization/solver diagnostics, and the effective settings. Curve mode writes
+converted `cp.csv`; XFOIL mode writes `boundary_layer.csv`, `xfoil_cp.csv`, and
+the individual solver command/output files under `xfoil_runs/`.
+
+Each requested position has a generated sizing configuration and a report
+directory such as `xc_0.07/`, `xc_0.1/`, or `xc_0.12/`, containing `report.html`,
+`design.csv`, `conditions.csv`, `summary.json`, and optional PNG/SVG figures.
+Use `--no-plot` to skip figures. Check the per-position design status and
+condition-level reasons; the workflow returns a nonzero exit code if the full
+requested envelope is not feasible. Running again into the same output folder
+replaces generated tables/reports, so use separate folders to retain runs.
 
 ## Use your own Cp distribution
 
@@ -417,8 +597,10 @@ universal wire or zigzag threshold is supplied.
 
 For a physical model, establish the laminar extent upstream of the trip and
 use a boundary-layer method suitable for the sweep, pressure gradients, wall
-temperature, and Mach range. Natural transition, crossflow, leading-edge
-contamination, shocks, and tunnel turbulence are not predicted by this tool.
+temperature, and Mach range. The Cp/profile routes do not predict natural
+transition; optional XFOIL provides a model-dependent section prediction.
+Crossflow, leading-edge contamination, shocks, and the tunnel's actual
+turbulence field are not predicted by this tool.
 
 ## References
 

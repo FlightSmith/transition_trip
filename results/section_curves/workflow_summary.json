@@ -1,0 +1,253 @@
+{
+  "settings": {
+    "schema_version": 1,
+    "name": "Section-curve example",
+    "input_directory": "synthetic_Cp",
+    "data_start_line": 8,
+    "section_state": 1,
+    "mode": "curves",
+    "value_kind": "cp",
+    "mach": 0.2,
+    "reynolds_mac": 8000000.0,
+    "reference_mac_m": 4.629,
+    "temperature_k": 288.15,
+    "states": [
+      {
+        "state": 1,
+        "alpha_deg": 0.0
+      },
+      {
+        "state": 2,
+        "alpha_deg": 1.0
+      },
+      {
+        "state": 3,
+        "alpha_deg": 2.0
+      }
+    ],
+    "positions_xc": [
+      0.07,
+      0.1,
+      0.12
+    ],
+    "alpha_reference": "section_chord",
+    "cp_initialization": {
+      "method": "synthetic_le_zero"
+    },
+    "trip": {
+      "type": "grit",
+      "height_margin": 1.1,
+      "max_k_delta99": 0.8,
+      "available_heights_mm": []
+    },
+    "xfoil": {
+      "executable": "xfoil",
+      "ncrit": 9.0,
+      "iterations": 200,
+      "timeout_s": 60.0,
+      "panels": 200
+    }
+  },
+  "geometry": [
+    {
+      "file": "section_state1_station-1.250",
+      "sha256": "45d7e039367461da9006e96196dc3cada818293dbe84241f3497c80d53303c76",
+      "y_m": -1.25,
+      "eta": 0.0,
+      "chord_m": 1.75,
+      "streamwise_chord_m": 1.75,
+      "x_le_m": 2.1875,
+      "z_le_m": 0.025,
+      "incidence_deg": 0.0,
+      "normalized_file": "airfoils/station_01.dat"
+    },
+    {
+      "file": "section_state1_station-5.000",
+      "sha256": "304d78b0291c9303cd5642ee2d183da0b8e32067725283fc12ec16a367f7a010",
+      "y_m": -5.0,
+      "eta": 1.0,
+      "chord_m": 1.0,
+      "streamwise_chord_m": 1.0,
+      "x_le_m": 2.75,
+      "z_le_m": 0.1,
+      "incidence_deg": 0.0,
+      "normalized_file": "airfoils/station_02.dat"
+    }
+  ],
+  "imported_files": [
+    {
+      "file": "cp_dist_state1_station-1.250",
+      "sha256": "939f23aa30b0aaa6876a796a3a37d47f815433c4464ac42849327b930b2cc763",
+      "state": 1,
+      "y_m": -1.25,
+      "value_kind": "cp",
+      "dynamic_pressure_pa": null,
+      "static_pressure_pa": null
+    },
+    {
+      "file": "cp_dist_state1_station-5.000",
+      "sha256": "bbdb4c73b1417d7178926fcbebd00ad52664690bff7c82f9a1f11eb69f3d46fe",
+      "state": 1,
+      "y_m": -5.0,
+      "value_kind": "cp",
+      "dynamic_pressure_pa": null,
+      "static_pressure_pa": null
+    },
+    {
+      "file": "cp_dist_state2_station-1.250",
+      "sha256": "5f68f4ac779e6c700ee61dcdf6077a6681cc95c91989a5c6faabdf8de96d3b24",
+      "state": 2,
+      "y_m": -1.25,
+      "value_kind": "cp",
+      "dynamic_pressure_pa": null,
+      "static_pressure_pa": null
+    },
+    {
+      "file": "cp_dist_state2_station-5.000",
+      "sha256": "d603f4cb9408573bbc865338f8a9e6968be6ec3afc56932f357f3c28a8cbd8c7",
+      "state": 2,
+      "y_m": -5.0,
+      "value_kind": "cp",
+      "dynamic_pressure_pa": null,
+      "static_pressure_pa": null
+    },
+    {
+      "file": "cp_dist_state3_station-1.250",
+      "sha256": "be236e2b41bd8d9f1dca192c5b67faf6aeb8ea782f23ff181ccac84608e207d8",
+      "state": 3,
+      "y_m": -1.25,
+      "value_kind": "cp",
+      "dynamic_pressure_pa": null,
+      "static_pressure_pa": null
+    },
+    {
+      "file": "cp_dist_state3_station-5.000",
+      "sha256": "18563455bf5b60d4bfae192a9814d27475ab183e05cda1f9a5a3119cd62a6619",
+      "state": 3,
+      "y_m": -5.0,
+      "value_kind": "cp",
+      "dynamic_pressure_pa": null,
+      "static_pressure_pa": null
+    }
+  ],
+  "solver_plan": [],
+  "diagnostics": [
+    {
+      "state": 1,
+      "y_m": -1.25,
+      "surface": "upper",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 1,
+      "y_m": -1.25,
+      "surface": "lower",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 1,
+      "y_m": -5.0,
+      "surface": "upper",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 1,
+      "y_m": -5.0,
+      "surface": "lower",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 2,
+      "y_m": -1.25,
+      "surface": "upper",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 2,
+      "y_m": -1.25,
+      "surface": "lower",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 2,
+      "y_m": -5.0,
+      "surface": "upper",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 2,
+      "y_m": -5.0,
+      "surface": "lower",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 3,
+      "y_m": -1.25,
+      "surface": "upper",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 3,
+      "y_m": -1.25,
+      "surface": "lower",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 3,
+      "y_m": -5.0,
+      "surface": "upper",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    },
+    {
+      "state": 3,
+      "y_m": -5.0,
+      "surface": "lower",
+      "initialization": "synthetic_le_zero",
+      "initial_xc": 0.0,
+      "initial_s_m": 0.0,
+      "theta0_m": 0.0
+    }
+  ],
+  "notes": [
+    "Geometry comes from supplied sections, not the earlier left-wing template.",
+    "Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred.",
+    "All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order.",
+    "Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow.",
+    "Cp integration uses true section arc length and the explicitly selected initial-thickness assumption.",
+    "synthetic_le_zero is a demonstration assumption; Cp=1 at the geometric LE is not exact compressible stagnation."
+  ],
+  "status": "processed"
+}

@@ -101,6 +101,43 @@ class PortableWorkflowTests(unittest.TestCase):
         self.assertEqual(jobs[0][jobs[0].index('--cp-file') + 1], str(self.inputs / 'cp.csv'))
         self.assertEqual(jobs[0][jobs[0].index('--position-xc') + 1], '0.12')
 
+    def test_section_menu_records_pressure_references_and_defaults(self):
+        output = self.folder / 'section pressure menu'
+        answers = ['6', '', '', '', '', '', '', 'pressure', '2000', '101325', '', str(output)]
+        with patch('builtins.input', side_effect=answers), contextlib.redirect_stdout(io.StringIO()):
+            jobs = menu()
+        cfg = json.loads((output / 'workflow.json').read_text(encoding='utf-8'))
+        self.assertEqual(cfg['pressure_reference'], {'dynamic_pressure_pa': 2000., 'static_pressure_pa': 101325.})
+        self.assertEqual(cfg['mach'], .2)
+        self.assertEqual(cfg['reynolds_mac'], 8e6)
+        self.assertEqual(cfg['reference_mac_m'], 4.629)
+        self.assertEqual([s['alpha_deg'] for s in cfg['states']], [0, 1, 2])
+        self.assertEqual((output / cfg['input_directory']).resolve(), self.root / 'synthetic_Cp')
+        self.assertEqual(jobs[0][0], '--section-config')
+
+    def test_section_xfoil_menu_saves_executable_without_running_it(self):
+        output = self.folder / 'section xfoil menu'
+        answers = ['7', '', '', '', '', '', '', 'my-xfoil', str(output)]
+        with patch('builtins.input', side_effect=answers), contextlib.redirect_stdout(io.StringIO()):
+            jobs = menu()
+        cfg = json.loads((output / 'workflow.json').read_text(encoding='utf-8'))
+        self.assertEqual(cfg['mode'], 'xfoil')
+        self.assertEqual(cfg['xfoil']['executable'], 'my-xfoil')
+        self.assertEqual(jobs[0][0], '--section-config')
+        self.assertEqual(jobs[0][jobs[0].index('--xfoil-exe') + 1], 'my-xfoil')
+        self.assertFalse((output / 'boundary_layer.csv').exists())
+
+    def test_section_cli_works_from_other_directory_with_spaces(self):
+        output = self.folder / 'section results with spaces'
+        process = subprocess.run([
+            sys.executable, str(self.root / 'run_trip.py'), '--section-config',
+            str(self.root / 'examples/section_curves/workflow.json'),
+            '--output', str(output), '--no-plot'], cwd=self.folder,
+            capture_output=True, text=True, timeout=30)
+        self.assertEqual(process.returncode, 0, process.stdout + process.stderr)
+        for tag in ('0.07', '0.1', '0.12'):
+            self.assertTrue((output / f'xc_{tag}' / 'report.html').is_file())
+
 
 if __name__ == '__main__':
     unittest.main()

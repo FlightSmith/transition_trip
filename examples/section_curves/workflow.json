@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "name": "Section-curve example",
+  "input_directory": "../../synthetic_Cp",
+  "data_start_line": 8,
+  "section_state": 1,
+  "mode": "curves",
+  "value_kind": "cp",
+  "mach": 0.2,
+  "reynolds_mac": 8000000.0,
+  "reference_mac_m": 4.629,
+  "temperature_k": 288.15,
+  "states": [
+    {
+      "state": 1,
+      "alpha_deg": 0.0
+    },
+    {
+      "state": 2,
+      "alpha_deg": 1.0
+    },
+    {
+      "state": 3,
+      "alpha_deg": 2.0
+    }
+  ],
+  "positions_xc": [
+    0.07,
+    0.1,
+    0.12
+  ],
+  "alpha_reference": "section_chord",
+  "cp_initialization": {
+    "method": "synthetic_le_zero"
+  },
+  "trip": {
+    "type": "grit",
+    "height_margin": 1.1,
+    "max_k_delta99": 0.8,
+    "available_heights_mm": []
+  },
+  "xfoil": {
+    "executable": "xfoil",
+    "ncrit": 9.0,
+    "iterations": 200,
+    "timeout_s": 60.0,
+    "panels": 200
+  }
+}

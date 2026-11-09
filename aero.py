@@ -225,11 +225,29 @@ def build_surrogate_profile(theta_m: float, lambda_value: float,
     if not math.isfinite(lam) or not -0.09 < lam <= 0.1:
         raise ValueError("Thwaites profile reconstruction requires -0.09 < lambda <= 0.1")
     h_target = float(_thwaites_h(np.array([lam]))[0])
+    metrics = profile_from_integrals(theta, h_target, ue, nu)
+    metrics.update(method='thwaites_H_matched_quartic_surrogate', lambda_thwaites=lam)
+    return metrics
+
+
+def profile_from_integrals(theta_m: float, shape_factor: float,
+                           U_e_m_s: float, nu_m2_s: float) -> dict[str, Any]:
+    """Reconstruct an attached quartic from theta and an incompressible/Hk shape factor.
+
+    This supplies an approximate u(y), not a resolved solver profile. For XFOIL,
+    use the DUMP kinematic Hk and low-Mach theta; the transfer is approximate.
+    The profile family and its applicability bounds are the same as in the
+    Thwaites reconstruction above.
+    """
+    theta = _positive(theta_m, 'theta_m')
+    h_target = _positive(shape_factor, 'shape_factor')
+    ue = _positive(U_e_m_s, 'U_e_m_s')
+    nu = _positive(nu_m2_s, 'nu_m2_s')
     low, high = -12.0, 12.0
     t_low, d_low = _quartic_integrals(low)
     t_high, d_high = _quartic_integrals(high)
     if not d_high / t_high <= h_target <= d_low / t_low:
-        raise ValueError("Thwaites H lies outside the monotone quartic profile family")
+        raise ValueError("Shape factor lies outside the monotone quartic profile family")
     for _ in range(70):
         q = (low + high) / 2
         t, d = _quartic_integrals(q)
@@ -246,9 +264,9 @@ def build_surrogate_profile(theta_m: float, lambda_value: float,
     f[0], f[-1] = 0.0, 1.0
     metrics = profile_metrics(eta * delta, f * ue, nu, ue)
     metrics.update({
-        "method": "thwaites_H_matched_quartic_surrogate",
+        "method": "integral_H_matched_quartic_surrogate",
         "theta_target_m": theta, "H_target": h_target,
-        "quartic_shape_parameter": q, "lambda_thwaites": lam,
+        "quartic_shape_parameter": q, "lambda_thwaites": None,
         "profile_support_m": delta,
     })
     return metrics

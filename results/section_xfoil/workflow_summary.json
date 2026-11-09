@@ -1,0 +1,382 @@
+{
+  "settings": {
+    "schema_version": 1,
+    "name": "Section-curve example",
+    "input_directory": "synthetic_Cp",
+    "data_start_line": 8,
+    "section_state": 1,
+    "mode": "xfoil",
+    "value_kind": "cp",
+    "mach": 0.2,
+    "reynolds_mac": 8000000.0,
+    "reference_mac_m": 4.629,
+    "temperature_k": 288.15,
+    "states": [
+      {
+        "state": 1,
+        "alpha_deg": 0.0
+      },
+      {
+        "state": 2,
+        "alpha_deg": 1.0
+      },
+      {
+        "state": 3,
+        "alpha_deg": 2.0
+      }
+    ],
+    "positions_xc": [
+      0.07,
+      0.1,
+      0.12
+    ],
+    "alpha_reference": "section_chord",
+    "cp_initialization": {
+      "method": "synthetic_le_zero"
+    },
+    "trip": {
+      "type": "grit",
+      "height_margin": 1.1,
+      "max_k_delta99": 0.8,
+      "available_heights_mm": []
+    },
+    "xfoil": {
+      "executable": "xfoil",
+      "ncrit": 9.0,
+      "iterations": 200,
+      "timeout_s": 60.0,
+      "panels": 200
+    }
+  },
+  "geometry": [
+    {
+      "file": "section_state1_station-1.250",
+      "sha256": "45d7e039367461da9006e96196dc3cada818293dbe84241f3497c80d53303c76",
+      "y_m": -1.25,
+      "eta": 0.0,
+      "chord_m": 1.75,
+      "streamwise_chord_m": 1.75,
+      "x_le_m": 2.1875,
+      "z_le_m": 0.025,
+      "incidence_deg": 0.0,
+      "normalized_file": "airfoils/station_01.dat"
+    },
+    {
+      "file": "section_state1_station-5.000",
+      "sha256": "304d78b0291c9303cd5642ee2d183da0b8e32067725283fc12ec16a367f7a010",
+      "y_m": -5.0,
+      "eta": 1.0,
+      "chord_m": 1.0,
+      "streamwise_chord_m": 1.0,
+      "x_le_m": 2.75,
+      "z_le_m": 0.1,
+      "incidence_deg": 0.0,
+      "normalized_file": "airfoils/station_02.dat"
+    }
+  ],
+  "imported_files": [],
+  "solver_plan": [
+    {
+      "state": 1,
+      "y_m": -1.25,
+      "reynolds_local": 3024411.3199395123,
+      "mach": 0.2,
+      "alpha_local_deg": 0.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_01.dat"
+    },
+    {
+      "state": 1,
+      "y_m": -5.0,
+      "reynolds_local": 1728235.0399654354,
+      "mach": 0.2,
+      "alpha_local_deg": 0.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_02.dat"
+    },
+    {
+      "state": 2,
+      "y_m": -1.25,
+      "reynolds_local": 3024411.3199395123,
+      "mach": 0.2,
+      "alpha_local_deg": 1.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_01.dat"
+    },
+    {
+      "state": 2,
+      "y_m": -5.0,
+      "reynolds_local": 1728235.0399654354,
+      "mach": 0.2,
+      "alpha_local_deg": 1.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_02.dat"
+    },
+    {
+      "state": 3,
+      "y_m": -1.25,
+      "reynolds_local": 3024411.3199395123,
+      "mach": 0.2,
+      "alpha_local_deg": 2.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_01.dat"
+    },
+    {
+      "state": 3,
+      "y_m": -5.0,
+      "reynolds_local": 1728235.0399654354,
+      "mach": 0.2,
+      "alpha_local_deg": 2.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_02.dat"
+    }
+  ],
+  "diagnostics": [
+    {
+      "state": 1,
+      "y_m": -1.25,
+      "reynolds_local": 3024411.3199395123,
+      "mach": 0.2,
+      "alpha_local_deg": 0.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_01.dat",
+      "status": "converged",
+      "solver": {
+        "converged": true,
+        "reason": "",
+        "polar": {
+          "alpha": 0.0,
+          "cl": -0.0001,
+          "cd": 0.00509,
+          "cdp": 0.00072,
+          "cm": 0.0,
+          "top_xtr": 0.5056,
+          "bot_xtr": 0.5063,
+          "mach": 0.2,
+          "reynolds": 3024000.0,
+          "ncrit": 9.0,
+          "reynolds_print_tolerance": 510.0
+        },
+        "ncrit": 9.0,
+        "panels": 200,
+        "iterations": 200,
+        "executable_sha256": "c17342f84ae260c2b11a74cd0e2fb8189a5f8954c6bb7a8467a0f27055c7faea",
+        "airfoil_sha256": "762f5dc10e6d8424da88c6d1c1288fdf7a0683aeb08adc8af3d69a1f6342b8b6",
+        "transition_model": "natural envelope e^N; imposed trips at x/c=1,1",
+        "dump_note": "integral quantities, not u(y); H/Hk format inferred and recorded",
+        "returncode": 0,
+        "workdir": "xfoil_runs/xfoil_7hbljqnj",
+        "stdout_path": "xfoil_runs/xfoil_7hbljqnj/stdout.txt",
+        "commands_path": "xfoil_runs/xfoil_7hbljqnj/commands.txt",
+        "h_column_interpretation": "mass H converted to Hk using XFOIL HKIN relation"
+      }
+    },
+    {
+      "state": 1,
+      "y_m": -5.0,
+      "reynolds_local": 1728235.0399654354,
+      "mach": 0.2,
+      "alpha_local_deg": 0.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_02.dat",
+      "status": "converged",
+      "solver": {
+        "converged": true,
+        "reason": "",
+        "polar": {
+          "alpha": 0.0,
+          "cl": 0.0,
+          "cd": 0.00519,
+          "cdp": 0.00087,
+          "cm": -0.0,
+          "top_xtr": 0.591,
+          "bot_xtr": 0.5906,
+          "mach": 0.2,
+          "reynolds": 1728000.0,
+          "ncrit": 9.0,
+          "reynolds_print_tolerance": 510.0
+        },
+        "ncrit": 9.0,
+        "panels": 200,
+        "iterations": 200,
+        "executable_sha256": "c17342f84ae260c2b11a74cd0e2fb8189a5f8954c6bb7a8467a0f27055c7faea",
+        "airfoil_sha256": "4a6b161a30381380823580f9d65c1507c2ae7672dc1192985137e29fc6ce4373",
+        "transition_model": "natural envelope e^N; imposed trips at x/c=1,1",
+        "dump_note": "integral quantities, not u(y); H/Hk format inferred and recorded",
+        "returncode": 0,
+        "workdir": "xfoil_runs/xfoil_q4f98xz3",
+        "stdout_path": "xfoil_runs/xfoil_q4f98xz3/stdout.txt",
+        "commands_path": "xfoil_runs/xfoil_q4f98xz3/commands.txt",
+        "h_column_interpretation": "mass H converted to Hk using XFOIL HKIN relation"
+      }
+    },
+    {
+      "state": 2,
+      "y_m": -1.25,
+      "reynolds_local": 3024411.3199395123,
+      "mach": 0.2,
+      "alpha_local_deg": 1.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_01.dat",
+      "status": "converged",
+      "solver": {
+        "converged": true,
+        "reason": "",
+        "polar": {
+          "alpha": 1.0,
+          "cl": 0.1048,
+          "cd": 0.00515,
+          "cdp": 0.00077,
+          "cm": 0.0024,
+          "top_xtr": 0.4115,
+          "bot_xtr": 0.5995,
+          "mach": 0.2,
+          "reynolds": 3024000.0,
+          "ncrit": 9.0,
+          "reynolds_print_tolerance": 510.0
+        },
+        "ncrit": 9.0,
+        "panels": 200,
+        "iterations": 200,
+        "executable_sha256": "c17342f84ae260c2b11a74cd0e2fb8189a5f8954c6bb7a8467a0f27055c7faea",
+        "airfoil_sha256": "762f5dc10e6d8424da88c6d1c1288fdf7a0683aeb08adc8af3d69a1f6342b8b6",
+        "transition_model": "natural envelope e^N; imposed trips at x/c=1,1",
+        "dump_note": "integral quantities, not u(y); H/Hk format inferred and recorded",
+        "returncode": 0,
+        "workdir": "xfoil_runs/xfoil_xu639u4b",
+        "stdout_path": "xfoil_runs/xfoil_xu639u4b/stdout.txt",
+        "commands_path": "xfoil_runs/xfoil_xu639u4b/commands.txt",
+        "h_column_interpretation": "mass H converted to Hk using XFOIL HKIN relation"
+      }
+    },
+    {
+      "state": 2,
+      "y_m": -5.0,
+      "reynolds_local": 1728235.0399654354,
+      "mach": 0.2,
+      "alpha_local_deg": 1.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_02.dat",
+      "status": "converged",
+      "solver": {
+        "converged": true,
+        "reason": "",
+        "polar": {
+          "alpha": 1.0,
+          "cl": 0.1018,
+          "cd": 0.00525,
+          "cdp": 0.00092,
+          "cm": 0.0031,
+          "top_xtr": 0.4931,
+          "bot_xtr": 0.6883,
+          "mach": 0.2,
+          "reynolds": 1728000.0,
+          "ncrit": 9.0,
+          "reynolds_print_tolerance": 510.0
+        },
+        "ncrit": 9.0,
+        "panels": 200,
+        "iterations": 200,
+        "executable_sha256": "c17342f84ae260c2b11a74cd0e2fb8189a5f8954c6bb7a8467a0f27055c7faea",
+        "airfoil_sha256": "4a6b161a30381380823580f9d65c1507c2ae7672dc1192985137e29fc6ce4373",
+        "transition_model": "natural envelope e^N; imposed trips at x/c=1,1",
+        "dump_note": "integral quantities, not u(y); H/Hk format inferred and recorded",
+        "returncode": 0,
+        "workdir": "xfoil_runs/xfoil_sf08oo2e",
+        "stdout_path": "xfoil_runs/xfoil_sf08oo2e/stdout.txt",
+        "commands_path": "xfoil_runs/xfoil_sf08oo2e/commands.txt",
+        "h_column_interpretation": "mass H converted to Hk using XFOIL HKIN relation"
+      }
+    },
+    {
+      "state": 3,
+      "y_m": -1.25,
+      "reynolds_local": 3024411.3199395123,
+      "mach": 0.2,
+      "alpha_local_deg": 2.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_01.dat",
+      "status": "converged",
+      "solver": {
+        "converged": true,
+        "reason": "",
+        "polar": {
+          "alpha": 2.0,
+          "cl": 0.2088,
+          "cd": 0.00532,
+          "cdp": 0.00092,
+          "cm": 0.005,
+          "top_xtr": 0.3203,
+          "bot_xtr": 0.6918,
+          "mach": 0.2,
+          "reynolds": 3024000.0,
+          "ncrit": 9.0,
+          "reynolds_print_tolerance": 510.0
+        },
+        "ncrit": 9.0,
+        "panels": 200,
+        "iterations": 200,
+        "executable_sha256": "c17342f84ae260c2b11a74cd0e2fb8189a5f8954c6bb7a8467a0f27055c7faea",
+        "airfoil_sha256": "762f5dc10e6d8424da88c6d1c1288fdf7a0683aeb08adc8af3d69a1f6342b8b6",
+        "transition_model": "natural envelope e^N; imposed trips at x/c=1,1",
+        "dump_note": "integral quantities, not u(y); H/Hk format inferred and recorded",
+        "returncode": 0,
+        "workdir": "xfoil_runs/xfoil_okuentih",
+        "stdout_path": "xfoil_runs/xfoil_okuentih/stdout.txt",
+        "commands_path": "xfoil_runs/xfoil_okuentih/commands.txt",
+        "h_column_interpretation": "mass H converted to Hk using XFOIL HKIN relation"
+      }
+    },
+    {
+      "state": 3,
+      "y_m": -5.0,
+      "reynolds_local": 1728235.0399654354,
+      "mach": 0.2,
+      "alpha_local_deg": 2.0,
+      "section_incidence_deg": 0.0,
+      "airfoil_file": "airfoils/station_02.dat",
+      "status": "converged",
+      "solver": {
+        "converged": true,
+        "reason": "",
+        "polar": {
+          "alpha": 2.0,
+          "cl": 0.2025,
+          "cd": 0.00545,
+          "cdp": 0.00109,
+          "cm": 0.0065,
+          "top_xtr": 0.3927,
+          "bot_xtr": 0.7816,
+          "mach": 0.2,
+          "reynolds": 1728000.0,
+          "ncrit": 9.0,
+          "reynolds_print_tolerance": 510.0
+        },
+        "ncrit": 9.0,
+        "panels": 200,
+        "iterations": 200,
+        "executable_sha256": "c17342f84ae260c2b11a74cd0e2fb8189a5f8954c6bb7a8467a0f27055c7faea",
+        "airfoil_sha256": "4a6b161a30381380823580f9d65c1507c2ae7672dc1192985137e29fc6ce4373",
+        "transition_model": "natural envelope e^N; imposed trips at x/c=1,1",
+        "dump_note": "integral quantities, not u(y); H/Hk format inferred and recorded",
+        "returncode": 0,
+        "workdir": "xfoil_runs/xfoil_9bugt5ag",
+        "stdout_path": "xfoil_runs/xfoil_9bugt5ag/stdout.txt",
+        "commands_path": "xfoil_runs/xfoil_9bugt5ag/commands.txt",
+        "h_column_interpretation": "mass H converted to Hk using XFOIL HKIN relation"
+      }
+    }
+  ],
+  "notes": [
+    "Geometry comes from supplied sections, not the earlier left-wing template.",
+    "Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred.",
+    "All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order.",
+    "Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow.",
+    "XFOIL computes its own Cp from geometry; imported Cp is not prescribed to its viscous solver.",
+    "The undisturbed calculation allows natural transition; the requested trip is not imposed in XFOIL.",
+    "DUMP supplies integral quantities, not resolved u(y). Low-Mach Hk/theta reconstruction is approximate.",
+    "Re_k reconstruction uses constant freestream kinematic viscosity; DUMP does not provide nu(y) or wall temperature.",
+    "Laminar confirmation is predicted by the solver transition model, not established experimentally."
+  ],
+  "status": "processed"
+}

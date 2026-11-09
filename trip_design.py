@@ -14,7 +14,7 @@ import sys
 import numpy as np
 
 from aero import (tunnel_state, edge_state, thwaites, build_surrogate_profile,
-                  profile_metrics, required_height, roughness_re)
+                  profile_metrics, profile_from_integrals, required_height, roughness_re)
 
 
 def positive(value, label, allow_zero=False):
@@ -69,6 +69,8 @@ def validate_config(cfg):
         raise ValueError('wing.stations must have unique eta values in [0,1]')
     for station in stations:
         positive(station['chord_m'], 'chord_m')
+        if 'streamwise_chord_m' in station:
+            positive(station['streamwise_chord_m'], 'streamwise_chord_m')
         if 'y_m' in station and not math.isfinite(float(station['y_m'])):
             raise ValueError('station y_m must be finite')
     conditions = cfg['conditions']
@@ -114,8 +116,8 @@ def validate_config(cfg):
         if not str(calibration.get('notes', '')).strip():
             raise ValueError('calibration.notes must identify the applicability/source')
     analysis = cfg['analysis']
-    if analysis['source'] not in ('cp', 'profiles'):
-        raise ValueError('analysis.source must be cp or profiles')
+    if analysis['source'] not in ('cp', 'profiles', 'integral'):
+        raise ValueError('analysis.source must be cp, profiles, or integral')
     if 'laminar_until_xc' in analysis:
         laminar_limit(analysis['laminar_until_xc'], 'analysis.laminar_until_xc')
     return calibration
@@ -204,6 +206,31 @@ def pick_height(required_m, hardware_mm):
                  if float(h) / 1000 >= required_m * (1 - 1e-12)), None)
 
 
+def integral_profile(rows, xc):
+    """Use validated laminar integral quantities, with an explicit u(y) surrogate."""
+    selected = [r for r in rows if abs(float(r['x_c']) - xc) < 1e-9]
+    if len(selected) != 1:
+        raise ValueError('exactly one integral record is required at the requested x/c')
+    row = selected[0]
+    if row.get('status', 'valid') != 'valid':
+        raise ValueError(row.get('reason') or 'invalid boundary-layer solver result')
+    if row['laminar_confirmed'].strip().lower() not in ('true', '1', 'yes'):
+        raise ValueError('integral record does not confirm undisturbed laminar flow')
+    transition = laminar_limit(row['transition_xc'], 'transition_xc')
+    if xc >= transition - 1e-10:
+        raise ValueError('trip is at/downstream of predicted natural transition')
+    positive(row['cf'], 'attached laminar cf')
+    edge_mach = positive(row['edge_mach'], 'edge_mach', allow_zero=True)
+    if edge_mach > .3:
+        raise ValueError('integral profile reconstruction is limited to local Mach <=0.30')
+    p = profile_from_integrals(float(row['theta_m']), float(row['shape_factor']),
+                               float(row['ue_m_s']), float(row['nu_m2_s']))
+    p.update(ue_m_s=float(row['ue_m_s']), edge_mach=edge_mach,
+             method='solver_integrals_Hk_matched_quartic_surrogate',
+             distance_basis='surface boundary-layer integral solution')
+    return p
+
+
 def select_common_height(profiles, required_m, hardware_mm, cap, target):
     """Smallest admissible common height, including nonmonotone Re_k from nu(y)."""
     upper = min(min(p['delta99_m'] * cap, p['y_m'][-1]) for p in profiles)
@@ -266,9 +293,13 @@ def run_design(config_path, *, cp_file=None, profiles_file=None, position_xc=Non
     calibration = validate_config(cfg)
     wing, trip, analysis = cfg['wing'], cfg['trip'], cfg['analysis']
     source = analysis['source']
-    data_path = (config_path.parent / analysis['cp_file' if source == 'cp' else 'profiles_file']).resolve()
+    input_field = {'cp': 'cp_file', 'profiles': 'profiles_file', 'integral': 'integral_file'}[source]
+    data_path = (config_path.parent / analysis[input_field]).resolve()
     columns = ['condition_id', 'eta', 'surface', 'x_c']
-    columns += ['cp'] if source == 'cp' else ['y_m', 'u_m_s', 'nu_m2_s', 'ue_m_s', 'edge_mach', 'laminar_confirmed']
+    columns += {'cp': ['cp'],
+                'profiles': ['y_m', 'u_m_s', 'nu_m2_s', 'ue_m_s', 'edge_mach', 'laminar_confirmed'],
+                'integral': ['theta_m', 'shape_factor', 'nu_m2_s', 'ue_m_s', 'edge_mach',
+                             'laminar_confirmed', 'transition_xc', 'cf']}[source]
     data = read_csv(data_path, columns)
     groups = {}
     ids = {str(c['id']) for c in cfg['conditions']}
@@ -311,8 +342,16 @@ def run_design(config_path, *, cp_file=None, profiles_file=None, position_xc=Non
                         raise ValueError('missing data for condition/station/surface')
                     if re_x < float(calibration['min_re_x']):
                         raise ValueError('station Re_x is below calibration minimum; downstream position or calibrated criterion needed')
-                    p = (cp_profile(rows, chord, xc, fs, condition, analysis) if source == 'cp'
-                         else supplied_profile(rows, xc, analysis))
+                    if source == 'cp':
+                        p = cp_profile(rows, chord, xc, fs, condition, analysis)
+                    elif source == 'profiles':
+                        p = supplied_profile(rows, xc, analysis)
+                    else:
+                        if float(condition['mach']) > .3:
+                            raise ValueError('integral reconstruction requires freestream Mach <=0.30')
+                        if 'laminar_until_xc' in analysis and xc >= float(analysis['laminar_until_xc']):
+                            raise ValueError('requested trip is at or downstream of the known laminar limit')
+                        p = integral_profile(rows, xc)
                     if p['edge_mach'] > float(calibration['max_edge_mach']):
                         raise ValueError('local edge Mach exceeds trip calibration range')
                     critical = required_height(p, target, float(p['y_m'][-1]))
@@ -335,7 +374,7 @@ def run_design(config_path, *, cp_file=None, profiles_file=None, position_xc=Non
                 local_rows.append(record)
                 condition_rows.append(record)
             design = dict(eta=eta, surface=surface, x_c=xc, chord_m=chord,
-                          y_span_m=y_span, x_global_m=x_le + chord * xc,
+                          y_span_m=y_span, x_global_m=x_le + float(station.get('streamwise_chord_m', chord)) * xc,
                           status='infeasible', reason='', height_mm=None)
             bad = [r for r in local_rows if r['status'] != 'feasible']
             if bad:
@@ -374,7 +413,7 @@ def run_design(config_path, *, cp_file=None, profiles_file=None, position_xc=Non
         uniform_ok = uniform_m is not None
         uniform = dict(status='feasible' if uniform_ok else 'infeasible',
                        height_mm=uniform_m * 1000 if uniform_ok else None,
-                       reason='' if uniform_ok else 'one height for the entire wing violates a local cap')
+                       reason='' if uniform_ok else 'one height for all supplied stations violates a local cap')
     warnings = [
         'Preliminary trip sizing, not a prediction or guarantee of transition or downstream turbulent development.',
         'Only the supplied discrete conditions are covered; no guarantee between sampled angles of attack or Reynolds numbers.',
@@ -388,9 +427,13 @@ def run_design(config_path, *, cp_file=None, profiles_file=None, position_xc=Non
         warnings += ['Cp mode assumes the upstream boundary layer remains laminar unless a known limit is supplied.',
                      'Cp mode uses incompressible Thwaites and a reconstructed profile; freestream and upstream local Mach must stay <=0.30.',
                      'Angle of attack labels select supplied Cp cases; they do not generate aerodynamic loading.']
-    else:
+    elif source == 'profiles':
         warnings += ['Profile mode trusts the supplied laminar confirmation and local kinematic viscosity.',
                      'Scalar profile velocity must follow the direction applicable to the calibrated trip criterion; crossflow is not modeled.']
+    else:
+        warnings += ['Integral mode reconstructs u(y) from theta and shape factor; this is not a resolved wall-normal solver profile.',
+                     'XFOIL DUMP H/Hk formats are checked and converted to Hk; theta and freestream viscosity are transferred approximately at low Mach.',
+                     'Solver cases must converge and the requested station must remain attached and upstream of natural transition.']
     summary = dict(name=cfg.get('name', config_path.stem), data_origin=cfg.get('data_origin', 'user supplied'),
                    source=source, status='feasible' if all_feasible else 'not_feasible', overrides=overrides,
                    calibration=calibration, height_margin=margin, max_k_delta99=cap,
@@ -431,7 +474,7 @@ def make_plot(output, cfg, summary, rows):
     span = np.array([float(s.get('y_m', distance)) for s, distance in zip(stations, outboard)])
     le = np.array([float(s.get('x_le_m', distance * math.tan(math.radians(float(wing['sweep_le_deg'])))))
                    for s, distance in zip(stations, outboard)])
-    chord = np.array([s['chord_m'] for s in stations])
+    chord = np.array([s.get('streamwise_chord_m', s['chord_m']) for s in stations])
     axes[0].fill_between(span, le, le + chord, color='#e6ebef')
     for surface, color in colors.items():
         design = [r for r in summary['design'] if r['surface'] == surface]
@@ -490,7 +533,7 @@ def write_outputs(output, cfg, summary, rows, plot=True):
     <p>Calibration: {esc(summary['calibration']['notes'])}</p>
     {('<img src="overview.png" alt="Trip position, height and boundary-layer ratio plots">' if plotted else '')}
     <h2>Common height across supplied conditions at each station</h2><table>{table}</table>
-    <p>Whole-wing uniform-height alternative: {esc(summary['uniform_height'])}</p>
+    <p>Uniform-height alternative across supplied stations: {esc(summary['uniform_height'])}</p>
     <h2>Interpretation</h2><ul>{''.join('<li>'+esc(w)+'</li>' for w in summary['warnings'])}</ul>
     <p>See <a href="conditions.csv">per-condition results</a>, <a href="design.csv">design table</a>,
     and <a href="summary.json">full results and input hashes</a>.</p></html>'''

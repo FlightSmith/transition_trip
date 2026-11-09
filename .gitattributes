@@ -3,6 +3,7 @@
 *.md text eol=lf
 *.json text eol=lf
 *.csv text eol=lf
+*.dat text eol=lf
 *.html text eol=lf
 *.svg text eol=lf
 *.ps1 text eol=crlf
@@ -11,3 +12,4 @@
 # Preserve example input bytes so published provenance hashes remain valid.
 examples/m6_synthetic/*.csv -text
 examples/m6_synthetic/*.json -text
+synthetic_Cp/** -text

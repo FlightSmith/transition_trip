@@ -1,0 +1,101 @@
+{
+  "name": "Section-curve example: 7% chord (curves)",
+  "data_origin": "Geometry comes from supplied sections, not the earlier left-wing template. Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred. All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order. Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow. Cp integration uses true section arc length and the explicitly selected initial-thickness assumption. synthetic_le_zero is a demonstration assumption; Cp=1 at the geometric LE is not exact compressible stagnation.",
+  "source": "cp",
+  "status": "feasible",
+  "overrides": {},
+  "calibration": {
+    "critical_re_k": 600.0,
+    "min_re_x": 100000.0,
+    "max_edge_mach": 0.95,
+    "notes": "Subsonic equiaxed distributed grit; NASA TN D-3579. Mach cap 0.95 is a tool guard."
+  },
+  "height_margin": 1.1,
+  "max_k_delta99": 0.8,
+  "design": [
+    {
+      "eta": 0.0,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 1.75,
+      "y_span_m": -1.25,
+      "x_global_m": 2.31,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.5270196251456265,
+      "governing_condition": "state1",
+      "max_k_delta99": 0.5676444087437236,
+      "min_re_k": 707.5074911467951
+    },
+    {
+      "eta": 0.0,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 1.75,
+      "y_span_m": -1.25,
+      "x_global_m": 2.31,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.574249412767808,
+      "governing_condition": "state3",
+      "max_k_delta99": 0.5428630306116682,
+      "min_re_k": 710.3415009809588
+    },
+    {
+      "eta": 1.0,
+      "surface": "upper",
+      "x_c": 0.07,
+      "chord_m": 1.0,
+      "y_span_m": -5.0,
+      "x_global_m": 2.82,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.47899825310875177,
+      "governing_condition": "state1",
+      "max_k_delta99": 0.6548673172831259,
+      "min_re_k": 701.6147339896085
+    },
+    {
+      "eta": 1.0,
+      "surface": "lower",
+      "x_c": 0.07,
+      "chord_m": 1.0,
+      "y_span_m": -5.0,
+      "x_global_m": 2.82,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.5041214739184321,
+      "governing_condition": "state3",
+      "max_k_delta99": 0.6331000927542475,
+      "min_re_k": 703.3015061709018
+    }
+  ],
+  "uniform_height": {
+    "status": "feasible",
+    "height_mm": 0.574249412767808,
+    "reason": ""
+  },
+  "warnings": [
+    "Preliminary trip sizing, not a prediction or guarantee of transition or downstream turbulent development.",
+    "Only the supplied discrete conditions are covered; no guarantee between sampled angles of attack or Reynolds numbers.",
+    "Sweep sets placement geometry only. Crossflow, attachment-line transition, and 3D streamline histories are not solved.",
+    "Height is exposed protrusion above the model surface, including mounting effects; verify actual installed height.",
+    "Height margin and k/delta99 cap are user design policies, not universal transition correlations.",
+    "Cp mode assumes the upstream boundary layer remains laminar unless a known limit is supplied.",
+    "Cp mode uses incompressible Thwaites and a reconstructed profile; freestream and upstream local Mach must stay <=0.30.",
+    "Angle of attack labels select supplied Cp cases; they do not generate aerodynamic loading."
+  ],
+  "inputs": [
+    {
+      "path": "config_xc_0.07.json",
+      "path_base": "configuration directory",
+      "sha256": "2f8c2038191f7eb185eba28786658e6e200ee41bb87f6bcebf05733f12a63c5d"
+    },
+    {
+      "path": "cp.csv",
+      "path_base": "configuration directory",
+      "sha256": "c3de273679260dd733ea4aece86fd51005d1900fce7ba9e69f9e2c7d5e0489c3"
+    }
+  ],
+  "plot_created": true
+}

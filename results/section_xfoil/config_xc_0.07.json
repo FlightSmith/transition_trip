@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "name": "Section-curve example: 7% chord (xfoil)",
+  "data_origin": "Geometry comes from supplied sections, not the earlier left-wing template. Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred. All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order. Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow. XFOIL computes its own Cp from geometry; imported Cp is not prescribed to its viscous solver. The undisturbed calculation allows natural transition; the requested trip is not imposed in XFOIL. DUMP supplies integral quantities, not resolved u(y). Low-Mach Hk/theta reconstruction is approximate. Re_k reconstruction uses constant freestream kinematic viscosity; DUMP does not provide nu(y) or wall temperature. Laminar confirmation is predicted by the solver transition model, not established experimentally.",
+  "wing": {
+    "semispan_m": 3.75,
+    "sweep_le_deg": 8.530765609948133,
+    "reference_length_m": 4.629,
+    "stations": [
+      {
+        "eta": 0.0,
+        "y_m": -1.25,
+        "x_le_m": 2.1875,
+        "chord_m": 1.75,
+        "streamwise_chord_m": 1.75
+      },
+      {
+        "eta": 1.0,
+        "y_m": -5.0,
+        "x_le_m": 2.75,
+        "chord_m": 1.0,
+        "streamwise_chord_m": 1.0
+      }
+    ]
+  },
+  "conditions": [
+    {
+      "id": "state1",
+      "alpha_deg": 0.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state2",
+      "alpha_deg": 1.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    },
+    {
+      "id": "state3",
+      "alpha_deg": 2.0,
+      "mach": 0.2,
+      "reynolds": 8000000.0,
+      "temperature_k": 288.15
+    }
+  ],
+  "trip": {
+    "type": "grit",
+    "height_margin": 1.1,
+    "max_k_delta99": 0.8,
+    "available_heights_mm": [],
+    "position_xc": {
+      "upper": 0.07,
+      "lower": 0.07
+    }
+  },
+  "analysis": {
+    "source": "integral",
+    "integral_file": "boundary_layer.csv"
+  }
+}

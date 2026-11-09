@@ -1,0 +1,101 @@
+{
+  "name": "Section-curve example: 10% chord (xfoil)",
+  "data_origin": "Geometry comes from supplied sections, not the earlier left-wing template. Eta spans only the supplied Y stations; no unprovided wing root, tip or full planform is inferred. All coordinates are interpreted in metres. Upper/lower curve order must match the section contour order. Angle mapping is explicit in the workflow settings. XFOIL is a 2D section method without crossflow. XFOIL computes its own Cp from geometry; imported Cp is not prescribed to its viscous solver. The undisturbed calculation allows natural transition; the requested trip is not imposed in XFOIL. DUMP supplies integral quantities, not resolved u(y). Low-Mach Hk/theta reconstruction is approximate. Re_k reconstruction uses constant freestream kinematic viscosity; DUMP does not provide nu(y) or wall temperature. Laminar confirmation is predicted by the solver transition model, not established experimentally.",
+  "source": "integral",
+  "status": "feasible",
+  "overrides": {},
+  "calibration": {
+    "critical_re_k": 600.0,
+    "min_re_x": 100000.0,
+    "max_edge_mach": 0.95,
+    "notes": "Subsonic equiaxed distributed grit; NASA TN D-3579. Mach cap 0.95 is a tool guard."
+  },
+  "height_margin": 1.1,
+  "max_k_delta99": 0.8,
+  "design": [
+    {
+      "eta": 0.0,
+      "surface": "upper",
+      "x_c": 0.1,
+      "chord_m": 1.75,
+      "y_span_m": -1.25,
+      "x_global_m": 2.3625,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.5579226831836566,
+      "governing_condition": "state3",
+      "max_k_delta99": 0.43854569431742246,
+      "min_re_k": 720.2965052692304
+    },
+    {
+      "eta": 0.0,
+      "surface": "lower",
+      "x_c": 0.1,
+      "chord_m": 1.75,
+      "y_span_m": -1.25,
+      "x_global_m": 2.3625,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.546087298105747,
+      "governing_condition": "state3",
+      "max_k_delta99": 0.4558448220699345,
+      "min_re_k": 706.9307084204238
+    },
+    {
+      "eta": 1.0,
+      "surface": "upper",
+      "x_c": 0.1,
+      "chord_m": 1.0,
+      "y_span_m": -5.0,
+      "x_global_m": 2.85,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.4876444636013093,
+      "governing_condition": "state3",
+      "max_k_delta99": 0.5076436640840822,
+      "min_re_k": 716.45324439726
+    },
+    {
+      "eta": 1.0,
+      "surface": "lower",
+      "x_c": 0.1,
+      "chord_m": 1.0,
+      "y_span_m": -5.0,
+      "x_global_m": 2.85,
+      "status": "feasible",
+      "reason": "",
+      "height_mm": 0.4869456665779883,
+      "governing_condition": "state3",
+      "max_k_delta99": 0.5349263963500607,
+      "min_re_k": 702.2412495108932
+    }
+  ],
+  "uniform_height": {
+    "status": "feasible",
+    "height_mm": 0.5579226831836566,
+    "reason": ""
+  },
+  "warnings": [
+    "Preliminary trip sizing, not a prediction or guarantee of transition or downstream turbulent development.",
+    "Only the supplied discrete conditions are covered; no guarantee between sampled angles of attack or Reynolds numbers.",
+    "Sweep sets placement geometry only. Crossflow, attachment-line transition, and 3D streamline histories are not solved.",
+    "Height is exposed protrusion above the model surface, including mounting effects; verify actual installed height.",
+    "Height margin and k/delta99 cap are user design policies, not universal transition correlations.",
+    "Integral mode reconstructs u(y) from theta and shape factor; this is not a resolved wall-normal solver profile.",
+    "XFOIL DUMP H/Hk formats are checked and converted to Hk; theta and freestream viscosity are transferred approximately at low Mach.",
+    "Solver cases must converge and the requested station must remain attached and upstream of natural transition."
+  ],
+  "inputs": [
+    {
+      "path": "config_xc_0.1.json",
+      "path_base": "configuration directory",
+      "sha256": "5c2ce1c63434b1002d6f231639cdf21565cca1b08eef08d6f277fd719e0eacfd"
+    },
+    {
+      "path": "boundary_layer.csv",
+      "path_base": "configuration directory",
+      "sha256": "133b82a768b04fe583dd1ebfb63ec619ecdf6680bff6e96cd764234111636471"
+    }
+  ],
+  "plot_created": true
+}
