@@ -338,6 +338,8 @@ def execute(settings_path, output, *, mode=None, value_kind=None, dynamic_pressu
                    data_origin=' '.join(notes), wing=wing, conditions=conditions,
                    trip=dict(settings.get('trip', {}), position_xc={'upper': xc, 'lower': xc}),
                    analysis={'source': source, 'cp_file' if source == 'cp' else 'integral_file': filename})
+        if settings.get('airfoil_name'):
+            cfg['airfoil_name'] = str(settings['airfoil_name'])
         cfg['trip'].setdefault('type', 'grit')
         cfg['trip'].setdefault('height_margin', 1.1)
         cfg['trip'].setdefault('max_k_delta99', .8)

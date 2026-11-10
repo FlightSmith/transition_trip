@@ -466,7 +466,7 @@ def make_plot(output, cfg, summary, rows):
         return False
     plt.rcParams.update({'font.size': 10, 'axes.spines.top': False, 'axes.spines.right': False})
     fig, axes = plt.subplots(1, 3, figsize=(15, 4.7), layout='constrained')
-    fig.suptitle(f"{summary['name']} | fixed-position trip sizing", fontsize=16, fontweight='bold')
+    fig.suptitle(f"{summary['name']} | fixed-position trip sizing", fontsize=16, fontweight='bold', parse_math=False)
     colors = {'upper': '#146a8a', 'lower': '#c66527'}
     wing = cfg['wing']
     stations = sorted(wing['stations'], key=lambda s: s['eta'])

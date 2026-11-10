@@ -4,14 +4,19 @@ from __future__ import annotations
 
 import copy
 import csv
+import html
 import json
 from pathlib import Path
+import shutil
+import sys
 import tempfile
+import types
 import unittest
 from unittest import mock
 
 from aero import tunnel_state
-from scaled_wing_report import POSITIONS, REYNOLDS, _validate_inputs, summarize
+from scaled_wing_report import (DEFAULT_AIRFOIL_NAME, POSITIONS, REYNOLDS,
+                                _plot_comparison, _validate_inputs, summarize)
 
 
 class ScaledWingReportTests(unittest.TestCase):
@@ -117,6 +122,89 @@ class ScaledWingReportTests(unittest.TestCase):
         self.assertEqual(len(audit["groups"]), 12)
         self.assertEqual(len(audit["inputs"]), 5)
         self.assertTrue(all(not Path(item["path"]).is_absolute() for item in audit["inputs"]))
+
+    def test_legacy_inputs_default_to_naca_name(self):
+        self.assertEqual(self.result["airfoil_name"], "NACA 64A204")
+        report = (self.directory / "report.html").read_text(encoding="utf-8")
+        self.assertIn("<h1>1:8 NACA 64A204 swept-wing trip comparison</h1>", report)
+        audit = json.loads((self.directory / "comparison_summary.json").read_text())
+        self.assertEqual(audit["airfoil_name"], DEFAULT_AIRFOIL_NAME)
+        for row in self.comparison:
+            self.assertEqual(row["airfoil_name"], DEFAULT_AIRFOIL_NAME)
+        cfg = json.loads((self.directory / "re3e6" / "config_xc_0.1.json").read_text())
+        self.assertEqual(cfg["airfoil_name"], DEFAULT_AIRFOIL_NAME)
+        self.assertIn(DEFAULT_AIRFOIL_NAME, cfg["name"])
+
+    def test_custom_airfoil_name_propagates_and_html_escapes(self):
+        airfoil_name = 'Custom <b>foil</b> & "quoted" $x$'
+        output = self.directory / "custom_airfoil"
+        source = output / "all_conditions"
+        source.mkdir(parents=True)
+        for position, original in self.configs.items():
+            cfg = copy.deepcopy(original)
+            cfg["airfoil_name"] = airfoil_name
+            cfg["name"] = "Historical NACA 64A204 display name"
+            (source / f"config_xc_{position:g}.json").write_text(json.dumps(cfg), encoding="utf-8")
+        for name in ("boundary_layer.csv", "workflow_summary.json"):
+            shutil.copyfile(self.directory / "all_conditions" / name, source / name)
+        with mock.patch("xfoil_backend.run_xfoil", side_effect=AssertionError("report must not execute XFOIL")):
+            result = summarize(output, plot=False)
+        self.assertEqual(result["airfoil_name"], airfoil_name)
+        escaped = html.escape(airfoil_name)
+        report = (output / "report.html").read_text(encoding="utf-8")
+        self.assertIn(f"<title>1:8 {escaped} swept-wing trip comparison</title>", report)
+        self.assertIn(f"<h1>1:8 {escaped} swept-wing trip comparison</h1>", report)
+        self.assertNotIn(airfoil_name, report)
+        for scope in ("all_conditions", "re3e6", "re5e6", "re8e6"):
+            summary = json.loads((output / scope / "xc_0.1" / "summary.json").read_text())
+            self.assertIn(airfoil_name, summary["name"])
+            self.assertNotIn("NACA", summary["name"])
+            individual = (output / scope / "xc_0.1" / "report.html").read_text(encoding="utf-8")
+            self.assertIn(escaped, individual)
+            self.assertNotIn(airfoil_name, individual)
+            if scope != "all_conditions":
+                derived = json.loads((output / scope / "config_xc_0.1.json").read_text())
+                self.assertEqual(derived["airfoil_name"], airfoil_name)
+                self.assertIn(airfoil_name, derived["name"])
+        audit = json.loads((output / "comparison_summary.json").read_text())
+        self.assertEqual(audit["airfoil_name"], airfoil_name)
+        with (output / "comparison.csv").open(newline="", encoding="utf-8") as handle:
+            self.assertTrue(all(row["airfoil_name"] == airfoil_name for row in csv.DictReader(handle)))
+
+    def test_plot_uses_literal_custom_airfoil_name(self):
+        summaries = {}
+        for scope in ("re3e6", "re5e6", "re8e6"):
+            for xc in POSITIONS:
+                summaries[(scope, xc)] = json.loads((self.directory / scope / f"xc_{xc:g}" / "summary.json").read_text())
+        figure = mock.Mock()
+        axes = [mock.Mock() for _ in POSITIONS]
+        for axis in axes:
+            axis.get_legend_handles_labels.return_value = ([], [])
+        plotting = types.ModuleType("matplotlib.pyplot")
+        plotting.rcParams = {}
+        plotting.subplots = mock.Mock(return_value=(figure, axes))
+        plotting.close = mock.Mock()
+        matplotlib = types.ModuleType("matplotlib")
+        matplotlib.use = mock.Mock()
+        matplotlib.pyplot = plotting
+        name = "Custom $literal$ airfoil"
+        with mock.patch.dict(sys.modules, {"matplotlib": matplotlib, "matplotlib.pyplot": plotting}), \
+                mock.patch.dict("os.environ", {}):
+            self.assertTrue(_plot_comparison(self.directory, summaries, name))
+        self.assertEqual(figure.suptitle.call_args.args[0], f"{name} wing | 1:8 model | Mach 0.20")
+        self.assertFalse(figure.suptitle.call_args.kwargs["parse_math"])
+        self.assertEqual(figure.savefig.call_count, 2)
+
+    def test_airfoil_names_must_be_nonempty_and_consistent(self):
+        configs = copy.deepcopy(self.configs)
+        configs[.1]["airfoil_name"] = "Different airfoil"
+        with self.assertRaisesRegex(ValueError, "same airfoil_name"):
+            _validate_inputs(configs, self.records)
+        for invalid in ("", "  ", None, 123, ["airfoil"]):
+            configs = copy.deepcopy(self.configs)
+            configs[.07]["airfoil_name"] = invalid
+            with self.subTest(name=invalid), self.assertRaisesRegex(ValueError, "nonempty string"):
+                _validate_inputs(configs, self.records)
 
     def test_missing_condition_matrix_and_unknown_saved_ids_rejected(self):
         configs = copy.deepcopy(self.configs)

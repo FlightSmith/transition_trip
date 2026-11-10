@@ -1,0 +1,9 @@
+{
+  "airfoil": "NACA 2412",
+  "source_url": "https://m-selig.ae.illinois.edu/ads/coord/naca2412.dat",
+  "publisher": "UIUC Airfoil Coordinates Database, University of Illinois",
+  "coordinate_format": "Named Selig contour; unit chord x/c,z/c; upper TE to LE to lower TE",
+  "point_count": 35,
+  "sha256": "cf46ed61eca566a02d4b136f46d3ef70efb41876cb17cdcbcdfee3f8e1d1d26a",
+  "note": "Tabulated geometry example for the custom-airfoil workflow; no experimental validation of trip sizing is claimed."
+}

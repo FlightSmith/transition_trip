@@ -1,8 +1,8 @@
-"""Generate and run the original left wing at 1:8 scale with NACA 64A204.
+"""Run the original left wing at 1:8 scale with NACA 64A204 or a supplied airfoil.
 
 Re_MAC is specified on the MODEL MAC and is not divided by the scale factor.
 Run once for all nine Reynolds/angle conditions; derive per-Re envelopes from
-the same solver records. No previous example inputs are modified.
+the same solver records. Custom airfoils use separate generated case folders.
 """
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 import sys
 
 import numpy as np
@@ -27,22 +28,60 @@ REYNOLDS = (3e6, 5e6, 8e6)
 ANGLES = (0., 1., 2.)
 
 
-def write_section(path, coordinates):
+def write_section(path, coordinates, airfoil_name='NACA 64A204'):
     # Seven header lines, numeric data starting at line eight, as in user files.
-    header = ['*KEYWORD', '*DEFINE_CURVE_TITLE', 'NACA 64A204 model section; X Z in metres',
+    header = ['*KEYWORD', '*DEFINE_CURVE_TITLE', f'{airfoil_name} model section; X Z in metres',
               '$ LCID SIDR SFA SFO OFFA OFFO DATTYP', '1 0 1 1 0 0 0',
               '$ Model scale 1:8; dimensions already scaled', '$ ABSCISSA ORDINATE']
     text = '\n'.join(header + [f'{x:.15g} {z:.15g}' for x, z in coordinates] + ['*END', ''])
-    path.write_text(text, encoding='ascii', newline='\n')
+    path.write_text(text, encoding='ascii', errors='replace', newline='\n')
 
 
-def prepare(case=CASE, airfoil=None):
-    case = Path(case).resolve()
+def read_airfoil(path):
+    """Read one named, normalized TE-LE-TE contour (Selig/XFOIL .dat format)."""
+    lines = Path(path).read_text(encoding='utf-8-sig').strip().splitlines()
+    if len(lines) < 11:
+        raise ValueError('Airfoil needs one name line and at least ten x/c z/c coordinate rows')
+    try:
+        [float(value) for value in lines[0].split()]
+    except ValueError:
+        pass
+    else:
+        raise ValueError('The first airfoil line must be a name, not coordinates or a point count')
+    try:
+        xy = np.loadtxt(lines[1:])
+    except ValueError as exc:
+        raise ValueError('Use one airfoil name line, then two whitespace-separated columns x/c z/c') from exc
+    if xy.ndim != 2 or xy.shape[1] != 2 or len(xy) < 10 or not np.all(np.isfinite(xy)):
+        raise ValueError('Airfoil coordinates must contain at least ten finite x/c z/c pairs')
+    if not (abs(float(xy[:, 0].min())) < .001 and abs(float(xy[:, 0].max()) - 1) < .001
+            and xy[0, 0] > .95 and xy[-1, 0] > .95):
+        raise ValueError('Airfoil must be normalized to unit chord and ordered trailing edge -> leading edge -> trailing edge')
+    return lines[0].strip(), xy
+
+
+def airfoil_slug(path):
+    return re.sub(r'[^a-zA-Z0-9_-]+', '_', Path(path).stem).strip('_').lower() or 'custom'
+
+
+def prepare(case=None, airfoil=None, airfoil_name=None):
+    custom = airfoil is not None
     airfoil = Path(airfoil or CASE / 'naca64a204.dat').resolve()
-    xy = np.loadtxt(airfoil, skiprows=1)
-    if xy.ndim != 2 or xy.shape[1] != 2 or not np.all(np.isfinite(xy)):
-        raise ValueError('Expected a labeled normalized NACA 64A204 coordinate file')
+    title, xy = read_airfoil(airfoil)
+    name = airfoil_name if airfoil_name is not None else (title if custom else 'NACA 64A204')
+    if not name.strip() or any(character in name for character in '\r\n\x00'):
+        raise ValueError('airfoil_name must be a nonempty single line')
+    name = name.strip()
+    case = Path(case or (ROOT / f'results/left_wing_scale8_{airfoil_slug(airfoil)}/inputs' if custom else CASE)).resolve()
+    if custom and case == CASE.resolve():
+        raise ValueError('Use a separate case folder for a custom airfoil')
     case.mkdir(parents=True, exist_ok=True)
+    source_name = airfoil.name
+    if custom:
+        local_source = case / 'source_airfoil.dat'
+        if local_source != airfoil:
+            local_source.write_bytes(airfoil.read_bytes())
+        source_name = local_source.name
     sections = case / 'sections'
     sections.mkdir(exist_ok=True)
     # Preserve the nominal NACA chord orientation. The geometric minimum-X
@@ -60,19 +99,21 @@ def prepare(case=CASE, airfoil=None):
         x_le = (ROOT_X_LE_M + eta * (TIP_X_LE_M - ROOT_X_LE_M)) * SCALE
         y = (ROOT_Y_M + eta * (TIP_Y_M - ROOT_Y_M)) * SCALE
         path = sections / f'section_state1_station{y:.8f}'
-        write_section(path, normalized * chord + [x_le, 0.])
+        write_section(path, normalized * chord + [x_le, 0.], name)
         actual = load_section(path)
         if not np.isclose(actual['chord_m'], chord, rtol=1e-8, atol=1e-10):
             raise ValueError('Generated section chord does not match the requested model scale')
         stations.append(dict(eta=float(eta), y_m=float(y), x_le_m=float(x_le), chord_m=float(chord)))
+    shape_origin = (f"User-supplied airfoil {name!r}, from {airfoil.name!r}, is used at every section with zero twist. "
+                    if custom else 'NACA 64A204 from the recorded PDAS source is used at every section with zero twist. ')
     origin = ('Original user left-wing planform scaled uniformly 1:8 (all lengths /8 and area /64); '
               'model MAC=0.578625 m; root/tip chords=0.695/0.125 m. '
-              'NACA 64A204 from the recorded PDAS source is used at every section with zero twist. '
-              'Angles refer to the nominal NACA chord/global X; the geometric-LE chord rotation is corrected in XFOIL local alpha. '
+              + shape_origin +
+              'Angles refer to the input airfoil chord/global X; the geometric-LE chord rotation is corrected in XFOIL local alpha. '
               'Mach=0.2; model-MAC Reynolds numbers 3e6, 5e6, 8e6; angles 0,1,2 degrees. '
               'These Reynolds numbers are not divided by 8. Independent 2D XFOIL strips do not solve 3D sweep flow.')
     settings = default_settings('sections')
-    settings.update(name='NACA 64A204 left wing, model scale 1:8', mode='xfoil',
+    settings.update(name=f'{name} left wing, model scale 1:8', airfoil_name=name, mode='xfoil',
                     alpha_reference='global_x',
                     reference_mac_m=REFERENCE_MAC_M * SCALE,
                     reference_area_m2=REFERENCE_AREA_M2 * SCALE**2, data_origin=origin,
@@ -85,7 +126,7 @@ def prepare(case=CASE, airfoil=None):
     write_json(case / 'model_geometry.json', dict(
         scale=SCALE, full_scale=geometry_metadata(), model_reference_mac_m=REFERENCE_MAC_M*SCALE,
         model_reference_area_m2=REFERENCE_AREA_M2*SCALE**2, model_stations=stations,
-        airfoil_file=airfoil.name, airfoil_sha256=hashlib.sha256(airfoil.read_bytes()).hexdigest(),
+        airfoil_name=name, airfoil_file=source_name, airfoil_sha256=hashlib.sha256(airfoil.read_bytes()).hexdigest(),
         coordinate_chord_normalization=dict(leading_edge=leading.tolist(), trailing_edge=trailing.tolist(),
                                             chord=float(reference_chord)),
         notes=origin))
@@ -94,28 +135,38 @@ def prepare(case=CASE, airfoil=None):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--airfoil', type=Path, help='Named unit-chord .dat contour; defaults to the bundled NACA 64A204')
+    parser.add_argument('--airfoil-name', help='Optional report name; defaults to the supplied file\'s first line')
     parser.add_argument('--xfoil-exe', help='External XFOIL executable; alternatively set XFOIL_EXE')
-    parser.add_argument('--output', type=Path, default=ROOT / 'results/left_wing_naca64a204_scale8')
+    parser.add_argument('--output', type=Path, help='Result folder; custom airfoils get a separate default folder')
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('--summarize-only', action='store_true', help='Rebuild reports from existing solver records')
     parser.add_argument('--no-plot', action='store_true')
     args = parser.parse_args(argv)
     try:
+        if args.airfoil_name is not None and args.airfoil is None:
+            raise ValueError('--airfoil-name requires --airfoil')
         if args.prepare_only and args.summarize_only:
             raise ValueError('Choose either prepare-only or summarize-only')
+        if args.summarize_only and args.airfoil is not None:
+            raise ValueError('--summarize-only uses saved data: omit --airfoil and select the saved --output folder')
+        output = (args.output or (ROOT / f'results/left_wing_scale8_{airfoil_slug(args.airfoil)}' if args.airfoil
+                                 else ROOT / 'results/left_wing_naca64a204_scale8')).resolve()
+        if args.airfoil and output == (ROOT / 'results/left_wing_naca64a204_scale8').resolve():
+            raise ValueError('Select a different --output folder for your custom airfoil')
         if not args.summarize_only:
-            config = prepare()
-            code = execute(config, args.output / 'all_conditions', xfoil_executable=args.xfoil_exe,
+            config = prepare(output / 'inputs' if args.airfoil else CASE, args.airfoil, args.airfoil_name)
+            code = execute(config, output / 'all_conditions', xfoil_executable=args.xfoil_exe,
                            prepare_only=args.prepare_only, no_plot=args.no_plot)
             if args.prepare_only:
                 return code
         from scaled_wing_report import summarize
-        summarize(args.output, plot=not args.no_plot)
-        print(f'Comparison report: {(args.output / "report.html").resolve()}')
+        summarize(output, plot=not args.no_plot)
+        print(f'Comparison report: {output / "report.html"}')
         # Reports can be complete while the requested aerodynamic envelope is
         # infeasible. Preserve the same exit-status convention as other routes.
         states = [json.loads(path.read_text(encoding='utf-8'))['status']
-                  for path in (args.output / 'all_conditions').glob('xc_*/summary.json')]
+                  for path in (output / 'all_conditions').glob('xc_*/summary.json')]
         return 0 if states and all(s == 'feasible' for s in states) else 2
     except (OSError, ValueError, KeyError, TypeError) as exc:
         print(f'Scaled-wing run error: {exc}', file=sys.stderr)

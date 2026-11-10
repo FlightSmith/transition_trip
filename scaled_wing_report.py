@@ -1,9 +1,11 @@
-"""Summarize a saved 1:8 NACA64A204 wing study without rerunning XFOIL.
+"""Summarize a saved 1:8 wing study without rerunning XFOIL.
 
 Input root must contain all_conditions/config_xc_0.07.json, config_xc_0.1.json,
 config_xc_0.12.json, boundary_layer.csv and workflow_summary.json. The nine
 conditions are Re_MAC=3e6/5e6/8e6 crossed with alpha=0/1/2 degrees. Derived
 per-Re data contain only their own condition IDs; no original BL data changes.
+The source configurations supply airfoil_name; legacy inputs default to
+"NACA 64A204". Geometry and the Reynolds/angle/position matrix remain fixed.
 """
 
 from __future__ import annotations
@@ -25,6 +27,7 @@ from trip_design import run_design, write_outputs
 
 POSITIONS = (.07, .10, .12)
 REYNOLDS = (3_000_000., 5_000_000., 8_000_000.)
+DEFAULT_AIRFOIL_NAME = "NACA 64A204"
 
 
 def _position_label(position):
@@ -52,8 +55,16 @@ def _condition_signature(config):
                   for c in config["conditions"])
 
 
+def _airfoil_name(config):
+    name = config.get("airfoil_name", DEFAULT_AIRFOIL_NAME)
+    if not isinstance(name, str) or not name.strip():
+        raise ValueError("airfoil_name must be a nonempty string")
+    return name.strip()
+
+
 def _validate_inputs(configs, records):
     first = configs[POSITIONS[0]]
+    airfoil_name = _airfoil_name(first)
     signature = _condition_signature(first)
     expected = {(re, alpha) for re in REYNOLDS for alpha in (0., 1., 2.)}
     actual = {(re, alpha) for _, re, alpha, _ in signature}
@@ -69,6 +80,8 @@ def _validate_inputs(configs, records):
             and math.isclose(float(first["wing"]["reference_length_m"]), .578625, rel_tol=0, abs_tol=1e-9)):
         raise ValueError("Expected 1:8 model root/tip chords .695/.125 m and reference MAC .578625 m")
     for position, config in configs.items():
+        if _airfoil_name(config) != airfoil_name:
+            raise ValueError("All position configurations must use the same airfoil_name")
         if _condition_signature(config) != signature or config["wing"] != first["wing"]:
             raise ValueError("All position configurations must use identical geometry and conditions")
         if config["analysis"]["source"] != "integral":
@@ -95,7 +108,8 @@ def _sample_record(designs, eta):
     return dict(row, height_mm=row["height_mm"] if row["status"] == "feasible" else None)
 
 
-def _comparison_rows(scope, reynolds, position, summary, conditions_count):
+def _comparison_rows(scope, reynolds, position, summary, conditions_count,
+                     airfoil_name=DEFAULT_AIRFOIL_NAME):
     rows = []
     uniform = summary["uniform_height"]
     uniform_height = uniform.get("height_mm") if uniform["status"] == "feasible" and summary["status"] == "feasible" else None
@@ -103,7 +117,7 @@ def _comparison_rows(scope, reynolds, position, summary, conditions_count):
         designs = sorted((d for d in summary["design"] if d["surface"] == surface), key=lambda d: d["eta"])
         valid = [d for d in designs if d["status"] == "feasible" and d["height_mm"] is not None]
         row = {
-            "scope": scope, "reynolds_mac": reynolds, "position_xc": position,
+            "airfoil_name": airfoil_name, "scope": scope, "reynolds_mac": reynolds, "position_xc": position,
             "surface": surface, "conditions_count": conditions_count,
             "valid_station_count": len(valid), "total_station_count": len(designs),
             "full_surface_coverage": len(valid) == len(designs) and bool(designs),
@@ -124,7 +138,7 @@ def _comparison_rows(scope, reynolds, position, summary, conditions_count):
     return rows
 
 
-def _plot_comparison(output, summaries):
+def _plot_comparison(output, summaries, airfoil_name=DEFAULT_AIRFOIL_NAME):
     os.environ.setdefault("MPLCONFIGDIR", str((output / ".plot_cache").resolve()))
     try:
         import matplotlib
@@ -165,7 +179,8 @@ def _plot_comparison(output, summaries):
     fig.legend(handles, labels, loc="lower center", bbox_to_anchor=(.5, .075), ncol=3, frameon=False, fontsize=9)
     first_summary = summaries[("re3e6", POSITIONS[0])]
     calibration = first_summary["calibration"]
-    fig.suptitle("NACA64A204 wing | 1:8 model | Mach 0.20", fontsize=16, fontweight="bold", y=.98)
+    fig.suptitle(f"{airfoil_name} wing | 1:8 model | Mach 0.20", fontsize=16,
+                 fontweight="bold", y=.98, parse_math=False)
     fig.text(.5, .918, "At each station: one height across alpha = 0, 1, 2 degrees for the indicated Reynolds number", ha="center", fontsize=10)
     fig.text(.5, .018, "Line gaps are invalid/infeasible stations. Valid portions do not establish full-span coverage.\n"
              f"Re_k = {calibration['critical_re_k']:g}; minimum Re_x = {calibration['min_re_x']:,.0f}; 2D section BL with approximate profile reconstruction.",
@@ -177,7 +192,8 @@ def _plot_comparison(output, summaries):
     return True
 
 
-def _report_html(output, rows, metadata, chart_created, sizing_summary):
+def _report_html(output, rows, metadata, chart_created, sizing_summary,
+                  airfoil_name=DEFAULT_AIRFOIL_NAME):
     escape = lambda value: html.escape(str(value))
     def number(value):
         return "—" if value is None else f"{value:.6f}"
@@ -208,13 +224,13 @@ def _report_html(output, rows, metadata, chart_created, sizing_summary):
     calibration = sizing_summary["calibration"]
     chart = '<img src="comparison.png" alt="Three chord positions comparing trip height by Reynolds number and surface; lines stop at invalid stations">' if chart_created else '<p>Comparison chart not generated. Install matplotlib and rerun this report with plotting enabled.</p>'
     document = '''<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>1:8 swept-wing trip comparison</title><style>
+<title>1:8 ''' + escape(airfoil_name) + ''' swept-wing trip comparison</title><style>
 body{font:16px/1.5 system-ui,sans-serif;max-width:1440px;margin:35px auto;padding:0 24px;color:#173447}
 h1{font-size:30px;margin-bottom:8px}h2{margin-top:30px;font-size:21px}.note{background:#edf4f7;border-left:4px solid #237ba0;padding:16px 20px}
 .warning{background:#fff4e6;border-left-color:#bd7428}.scroll{overflow-x:auto}table{border-collapse:collapse;width:100%;font-size:13px}
 th,td{text-align:left;border-bottom:1px solid #d2dde3;padding:9px 8px}th{background:#f3f6f8}img{max-width:100%;height:auto}
 a{color:#176b9b}.meta{color:#52616c}code{background:#eef3f6;padding:2px 4px}</style>
-<h1>1:8 NACA64A204 swept-wing trip comparison</h1>
+<h1>1:8 ''' + escape(airfoil_name) + ''' swept-wing trip comparison</h1>
 <p class="meta">Mach 0.20 · angles 0°, 1°, 2° · Re_MAC 3, 5, 8 million · trip positions 7%, 10%, 12% chord</p>
 <p class="note"><strong>Model geometry:</strong> root/tip chord 0.695/0.125 m; reference MAC 0.578625 m. Linear dimensions use 1:8 scaling.
 Heights in every table are millimetres. The plotted span covers the 21 supplied stations of the left panel.</p>
@@ -252,6 +268,7 @@ def summarize(output_root, plot=True):
     if not fields or not records or "condition_id" not in fields:
         raise ValueError("Saved boundary-layer CSV is missing its header or data")
     first = _validate_inputs(configs, records)
+    airfoil_name = _airfoil_name(first)
     workflow_path = source / "workflow_summary.json"
     workflow = json.loads(_read_json(workflow_path))
     summaries, comparison, group_outcomes = {}, [], []
@@ -267,25 +284,34 @@ def summarize(output_root, plot=True):
         for position in POSITIONS:
             label = _position_label(position)
             config_path = directory / f"config_{label}.json"
+            condition_label = f"Re_MAC={reynolds/1e6:g}M" if reynolds != "all" else "all nine conditions"
+            report_name = f"1:8 {airfoil_name} wing; {condition_label}; {100*position:g}% chord"
             if reynolds != "all":
                 cfg = copy.deepcopy(configs[position])
                 cfg["conditions"] = selected_conditions
                 cfg["analysis"] = dict(cfg["analysis"], source="integral", integral_file="boundary_layer.csv")
-                cfg["name"] = f"1:8 NACA64A204 wing; Re_MAC={reynolds/1e6:g}M; {100*position:g}% chord"
+                cfg["airfoil_name"] = airfoil_name
+                cfg["name"] = report_name
                 cfg["data_origin"] = (str(cfg.get("data_origin", "")) + " Filtered from the saved nine-condition boundary-layer dataset; no solver rerun.")
                 _write_json(config_path, cfg)
             cfg, summary, condition_rows = run_design(config_path)
+            # airfoil_name is authoritative for generated report labels, even
+            # when an older source config still has a historical display name.
+            cfg["name"] = summary["name"] = report_name
+            cfg["airfoil_name"] = airfoil_name
             write_outputs(directory / label, cfg, summary, condition_rows, plot=plot)
             summaries[(scope, position)] = summary
-            comparison.extend(_comparison_rows(scope, reynolds, position, summary, len(selected_conditions)))
+            comparison.extend(_comparison_rows(scope, reynolds, position, summary,
+                                                len(selected_conditions), airfoil_name))
             group_outcomes.append({"scope": scope, "position_xc": position, "status": summary["status"],
                                    "uniform_height": summary["uniform_height"], "condition_count": len(selected_conditions)})
     csv_fields = list(dict.fromkeys(key for row in comparison for key in row))
     _write_csv(output / "comparison.csv", csv_fields, comparison)
-    chart_created = _plot_comparison(output, summaries) if plot else False
+    chart_created = _plot_comparison(output, summaries, airfoil_name) if plot else False
     sources = [data_path, workflow_path, *(source / f"config_{_position_label(x)}.json" for x in POSITIONS)]
     audit = {
         "description": "Derived sizing summaries from saved BL integrals; no XFOIL execution",
+        "airfoil_name": airfoil_name,
         "scale": "1:8", "reference_mac_m": .578625, "root_chord_m": .695, "tip_chord_m": .125,
         "chart_created": chart_created, "comparison_rows": len(comparison), "groups": group_outcomes,
         "uniform_definition": "One common height passing all supplied stations on both surfaces and all selected conditions",
@@ -293,10 +319,11 @@ def summarize(output_root, plot=True):
         "inputs": [{"path": path.relative_to(output).as_posix(), "sha256": hashlib.sha256(path.read_bytes()).hexdigest()} for path in sources],
     }
     _write_json(output / "comparison_summary.json", audit)
-    _report_html(output, comparison, workflow, chart_created, summaries[("re3e6", POSITIONS[0])])
+    _report_html(output, comparison, workflow, chart_created,
+                 summaries[("re3e6", POSITIONS[0])], airfoil_name)
     return {"output": str(output), "report": str(output / "report.html"),
             "comparison_csv": str(output / "comparison.csv"), "comparison_rows": len(comparison),
-            "chart_created": chart_created, "groups": group_outcomes}
+            "chart_created": chart_created, "airfoil_name": airfoil_name, "groups": group_outcomes}
 
 
 def main(argv=None):

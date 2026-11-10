@@ -14,11 +14,41 @@ Verify the selected trip in the tunnel using an appropriate transition diagnosti
 
 ## Run after downloading from GitHub
 
-Download and extract the repository, or clone it. Install Python **3.10 or
-newer** on the new computer. No Codex installation is required.
+No Codex installation is required. On a new Windows computer:
 
-**Windows:** double-click `setup_windows.cmd` once. It creates a local `.venv`
-and installs the dependencies. Then double-click `run_windows.cmd` to choose:
+1. Install **Python 3.10 or newer** from the
+   [official Windows downloads page](https://www.python.org/downloads/windows/).
+   Use a normal Python installation with the `py` launcher or `python` on PATH.
+2. Open [the GitHub repository](https://github.com/FlightSmith/transition_trip),
+   choose **Code → Download ZIP**, and extract it. Work in the extracted folder
+   containing `setup_windows.cmd`, not inside the ZIP.
+3. Double-click **`setup_windows.cmd`** and wait for **Setup complete**. This
+   creates `.venv` and installs the Python dependencies in the project folder.
+4. Download the [official Windows XFOIL 6.99 ZIP](https://web.mit.edu/drela/Public/web/xfoil/XFOIL6.99.zip)
+   and extract it so the executable is, for example,
+   `C:\tools\XFOIL\xfoil.exe`. Adjust the path below if yours differs.
+
+Open PowerShell in the extracted project folder. First check XFOIL:
+
+```powershell
+& "C:\tools\XFOIL\xfoil.exe"
+```
+
+At the XFOIL prompt, type **`QUIT`** and press Enter to return to PowerShell.
+Then set its location for this PowerShell window and run the NACA 64A204 study:
+
+```powershell
+$env:XFOIL_EXE = "C:\tools\XFOIL\xfoil.exe"
+.\.venv\Scripts\python.exe run_scaled_naca64a204.py
+```
+
+Open `results\left_wing_naca64a204_scale8\report.html` when the run finishes.
+The environment-variable setting lasts only for the current PowerShell window;
+set it again in a new window, or pass `--xfoil-exe "C:\tools\XFOIL\xfoil.exe"`
+on the run command. XFOIL is needed only for solver-based runs, not the included
+Cp/profile examples.
+
+For the other workflows, double-click `run_windows.cmd` to choose:
 
 1. M6 synthetic Cp example.
 2. Left-wing Blasius example at 7%, 10%, and 12% chord.
@@ -40,6 +70,50 @@ then run locally. Do not copy `.venv` between computers; run setup on each one.
 The setup and menu use project-relative locations and do not require the
 original computer's paths. Existing example inputs are included in GitHub;
 regenerating them is optional and replaces the selected example files.
+
+## Rerun with a different airfoil
+
+Provide **one normalized two-dimensional airfoil shape**; it is applied uniformly
+across the same 1:8 wing with zero twist. XFOIL calculates the new pressures and
+boundary layers, so **no existing Cp file is required**. The Mach, Reynolds
+numbers, angles, span stations, and trip positions stay as in the scaled study.
+
+For a ready example, run the included NACA 2412 file after the setup above:
+
+```powershell
+.\.venv\Scripts\python.exe run_scaled_naca64a204.py --airfoil .\examples\airfoils\naca2412.dat --output .\results\naca2412_scale8
+```
+
+For your own file, change just its path and use a separate output folder:
+
+```powershell
+.\.venv\Scripts\python.exe run_scaled_naca64a204.py --airfoil "C:\airfoils\my_airfoil.dat" --output .\results\my_airfoil_scale8
+```
+
+Open `report.html` in that output folder. Despite the script's historical name,
+the calculation uses the supplied shape. Report titles use the file's first
+line; add `--airfoil-name "My airfoil"` to override the title. Custom inputs
+are copied under the selected output's `inputs/` folder. If `--output` is
+omitted, the default is `results/left_wing_scale8_<file-stem>/`; the original
+NACA 64A204 result folder is protected from custom-airfoil runs. Reusing a
+custom output folder replaces its generated inputs and reports.
+
+The `.dat` format is a **single name line**, followed by at least **10 pairs**
+of whitespace-separated `x/c z/c` coordinates. Use a unit chord, with the
+contour ordered **trailing edge → upper surface → leading edge → lower surface
+→ trailing edge**. Do not include a point-count line or the seven-line pressure
+curve header. Do **not** divide the coordinates by 8: the script applies the
+model's local chords automatically. The bundled
+[`naca2412.dat`](examples/airfoils/naca2412.dat) is a 35-point Selig-format
+example from the [UIUC Airfoil Coordinates Database](https://m-selig.ae.illinois.edu/ads/coord/naca2412.dat).
+
+Use `--prepare-only` to inspect the generated geometry without running XFOIL.
+To rebuild reports later from saved solver records, select the existing output
+and omit `--airfoil`:
+
+```powershell
+.\.venv\Scripts\python.exe run_scaled_naca64a204.py --summarize-only --output .\results\my_airfoil_scale8
+```
 
 ## Section files with Cp or pressure curves
 
